@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hackaton_conducteur/Pages/Inscription2.dart';
+import 'package:hackaton_conducteur/Pages/Redirection.dart';
+
 
 import 'Pages/Inscription.dart';
 
@@ -17,7 +20,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: InscriptionPage(),
+        body:RedirectionPage(),
       ),
     );
   }
