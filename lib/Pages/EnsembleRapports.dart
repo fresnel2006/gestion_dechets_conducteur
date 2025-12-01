@@ -15,13 +15,40 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
 List <String> rapport_description=[];
 List <double> longitude=[];
 List <double> latitude=[];
+final description=TextEditingController();
 var photo_rapport;
+
 
 Future <void> prendre_photo() async{
   var photo=await ImagePicker().pickImage(source: ImageSource.camera);
-  setState(() {
-    photo_rapport=Image.file(File(photo!.path));
+  setState(() async{
+    photo_rapport= await Image.file(File(photo!.path));
   });
+}
+void ajouter_description(){
+  String valeur=description.text;
+  setState(() {
+    rapport_description.add(valeur);
+  });
+  print(rapport_description);
+  print(valeur);
+  description.clear();
+  Navigator.pop(context);
+
+}
+void message_de_suffisance(){
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(duration: Duration(seconds: 1),backgroundColor: Colors.transparent,content: Container(
+    height: MediaQuery.of(context).size.height *0.1,
+    width: MediaQuery.of(context).size.width *1,
+    decoration: BoxDecoration(color: Colors.red,
+    borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.06))
+    ),
+child: ListTile(title: Text("LIMITE ATTEINTE",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+  subtitle: Text("VEUILLEZ ENVOYER VOS RAPPORTS",style: TextStyle(color: Colors.white70,fontFamily: "Poppins"),),
+  leading: Icon(Icons.dangerous_outlined,size: MediaQuery.of(context).size.width *0.15,color: Colors.white,),
+),
+    
+  )));
 }
   void ajouter_rapport() {
     showModalBottomSheet(backgroundColor: Colors.transparent,context: context, builder: (context)=>SingleChildScrollView(
@@ -39,9 +66,12 @@ Future <void> prendre_photo() async{
         Container(child: Text("Appuyer pour prendre une photo",style: TextStyle(fontFamily: "Poppins",fontSize: MediaQuery.of(context).size.width *0.04)),),
 
 GestureDetector(
-  child: photo_rapport==null?Container(child: Lottie.asset("assets/animations/Add new.json",height: MediaQuery.of(context).size.height *0.20)):Container(
+  child: photo_rapport==null?Container(
+      child: Lottie.asset("assets/animations/Add new.json",height: MediaQuery.of(context).size.height *0.20)):Container(
     height: MediaQuery.of(context).size.height *0.15,
-    child: ClipRRect(child: photo_rapport,),),
+    child: Container(
+      decoration: BoxDecoration(border: Border.all(color: Colors.green,width: MediaQuery.of(context).size.width *0.007,),borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.02))),
+      child:ClipRRect(child: photo_rapport,),),),
   onTap: (){
     prendre_photo();
   },
@@ -50,11 +80,12 @@ GestureDetector(
           height: MediaQuery.of(context).size.height *0.1,
           padding: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.04,right: MediaQuery.of(context).size.width *0.04),
           child: TextFormField(
+            controller: description,
             maxLines: 200,
-          decoration: InputDecoration(
+            decoration: InputDecoration(
             hintText: "DESCRIPTION",
 suffixIcon: IconButton(onPressed: (){
-
+ajouter_description();
 }, icon: Icon(Icons.send,color: Colors.black,)),
 hintStyle: TextStyle(fontFamily: "Poppins"),
             enabledBorder: OutlineInputBorder(
@@ -77,6 +108,7 @@ borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width
 
         child: Column(
           children: [
+            
             SizedBox(height: MediaQuery.of(context).size.height *0.05,),
 Container(
   padding: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.020,right: MediaQuery.of(context).size.width *0.020),
@@ -96,19 +128,44 @@ Container(
     Container(
       decoration: BoxDecoration(border: Border.all(color: Colors.lightGreen,width:MediaQuery.of(context).size.width *0.006 ),borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1))),
       child: IconButton(onPressed: (){
-ajouter_rapport();
+        if(rapport_description.length==10){
+message_de_suffisance();
+        }else{
+          ajouter_rapport();
+        }
+
       }, icon: Icon(Icons.note_alt_outlined,color: Colors.green,size: MediaQuery.of(context).size.width *0.08,)),)
   ],),),
+            rapport_description.length==10?Container(
+
+              margin: EdgeInsets.only(top: MediaQuery.of(context).size.height *0.01),
+              child: ElevatedButton(onPressed: (){
+
+              }, child: Text("ENVOYER",style: TextStyle(color: Colors.white),),style: ElevatedButton.styleFrom(backgroundColor: Colors.green),),
+            ):Container(),
 SizedBox(height:MediaQuery.of(context).size.height *0.035)
 ,Container(
               decoration: BoxDecoration(border: Border.all(color: Colors.black38)),
               width: MediaQuery.of(context).size.width *0.6,
               height: MediaQuery.of(context).size.height *0.002,),
-            SizedBox(height:MediaQuery.of(context).size.height *0.02),
+
+
+
             Container(
               padding: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.05,right: MediaQuery.of(context).size.width *0.01),
               height: MediaQuery.of(context).size.height *0.84,width: MediaQuery.of(context).size.width *1,
-              child: rapport_description.length==0?GestureDetector(child: Container(
+              child: rapport_description.length!=0?ListView.builder(itemCount: rapport_description.length,itemBuilder: (context, index) =>
+                  ListTile(
+                    title: Text("Rapport ${index+1}",style: TextStyle(fontFamily: "Poppins"),),
+                    subtitle: Text("longitude : .....,latitude:.....",style: TextStyle(fontFamily: "Poppins",color: Colors.green),),
+                    trailing: Container(
+                      decoration: BoxDecoration(border: Border.all(color: Colors.black,),borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1))),
+                      child: CircleAvatar(backgroundColor: Colors.white,child: Icon(Icons.arrow_forward_sharp,color: Colors.green,),),
+                    ),onTap: (){
+                    print(index);
+                  },
+                  ),
+              ):GestureDetector(child: Container(
                 child: SingleChildScrollView(
                   child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -121,18 +178,9 @@ SizedBox(height:MediaQuery.of(context).size.height *0.035)
                       ajouter_rapport();
                     }, child: Text("AJOUTER",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),style: ElevatedButton.styleFrom(backgroundColor: Colors.deepOrange[400]),),)
                 ],),
-              ))):ListView.builder(itemCount: rapport_description.length,itemBuilder: (context, index) =>
-                 ListTile(
-                  title: Text("Rapport ${index+1}",style: TextStyle(fontFamily: "Poppins"),),
-                  subtitle: Text("longitude : .....,latitude:.....",style: TextStyle(fontFamily: "Poppins",color: Colors.green),),
-                  trailing: Container(
-                    decoration: BoxDecoration(border: Border.all(color: Colors.black,),borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1))),
-                    child: CircleAvatar(backgroundColor: Colors.white,child: Icon(Icons.arrow_forward_sharp,color: Colors.green,),),
-                  ),onTap: (){
-                    print(index);
-                  },
-                ),
-              ),)
+              ))),),
+
+
         ],),
       ),
     );

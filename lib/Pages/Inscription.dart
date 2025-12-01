@@ -68,7 +68,7 @@ Future <void>  connexion() async{
     ));
   }
 
-  void verification(){
+  void verification() async{
 
     if(numero_chef.text.trim().isEmpty||numero_chef.text.length<10||numero_chef.text.length>10){
       setState(() {
@@ -81,9 +81,9 @@ Future <void>  connexion() async{
       });
     }
     if(numero_chef.text.length==10 && mot_de_passe_chef.text.isNotEmpty && !mot_de_passe_chef.text.contains(" ")) {
-      connexion();
+      await connexion();
       if(data["statut"]=="succes"){
-        sauvegarde_de_redirection();
+        await sauvegarde_de_redirection();
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>RedirectionPage()), (route)=>false);
       }else{
         print("rien");}
