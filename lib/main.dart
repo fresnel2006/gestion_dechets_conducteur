@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hackaton_conducteur/Pages/Acceuil.dart';
+import 'package:hackaton_conducteur/Pages/EnsembleRapports.dart';
 import 'package:hackaton_conducteur/Pages/Inscription2.dart';
 import 'package:hackaton_conducteur/Pages/Redirection.dart';
 
@@ -20,7 +22,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body:RedirectionPage(),
+        body:EnsemblerapportsPage(),
       ),
     );
   }

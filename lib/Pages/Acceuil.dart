@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:hackaton_conducteur/Pages/EnsembleRapports.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
@@ -417,7 +418,9 @@ class _AcceuilPageState extends State<AcceuilPage> {
               right: MediaQuery.of(context).size.width *0.035,
               child: Row(
                 children: [
-                  Container(decoration: BoxDecoration(border: Border.all(color: Colors.black),borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)),child: CircleAvatar(backgroundColor: Colors.white,child: IconButton(onPressed: (){}, icon: Icon(Icons.note_alt_sharp,color: Colors.red)),),),
+                  Container(decoration: BoxDecoration(border: Border.all(color: Colors.black),borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)),child: CircleAvatar(backgroundColor: Colors.white,child: IconButton(onPressed: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>EnsemblerapportsPage()));
+                  }, icon: Icon(Icons.note_alt_sharp,color: Colors.red)),),),
                   SizedBox(width: MediaQuery.of(context).size.width *0.04,),
                   Container(decoration: BoxDecoration(border: Border.all(color: Colors.black),borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)),child: CircleAvatar(backgroundColor: Colors.white,child: IconButton(onPressed: (){
 
