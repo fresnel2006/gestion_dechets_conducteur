@@ -1,20 +1,47 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EnsemblerapportsPage extends StatefulWidget {
-  const EnsemblerapportsPage({super.key});
+  EnsemblerapportsPage({super.key, required this.latitude, required this.longitude});
+var latitude;
+var longitude;
 
   @override
   State<EnsemblerapportsPage> createState() => _EnsemblerapportsPageState();
 }
 
 class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
+
+  Future <void> envoyer_rapport() async{
+    for (int i=0;i<=10;i++){
+
+    }
+    try{
+    final url=Uri.parse("");
+    var message=await http.post(url,headers: {"Content-Type":"application/json"},
+    body: {
+
+    }
+    );
+        }catch(e){
+
+    }
+
+  }
+  Future <void> charger_donnee()async{
+    var perfs=await SharedPreferences.getInstance();
+    int? valeur_de_redirection=perfs.getInt("identifiant");
+    print(valeur_de_redirection);
+  }
 List <String> rapport_description=[];
-List <double> longitude=[];
-List <double> latitude=[];
+List <double> longitude_tableau=[];
+List <double> latitude_tableau=[];
+List <String> photo_tableau=[];
 final description=TextEditingController();
 var photo_rapport;
 
@@ -28,10 +55,16 @@ Future <void> prendre_photo() async{
 void ajouter_description(){
   String valeur=description.text;
   setState(() {
+    double loca_longitude=widget.latitude;
+    double loca_latitude=widget.longitude;
     rapport_description.add(valeur);
+    latitude_tableau.add(loca_latitude);
+    longitude_tableau.add(loca_longitude);
   });
   print(rapport_description);
   print(valeur);
+  print(latitude_tableau);
+  print(longitude_tableau);
   description.clear();
   Navigator.pop(context);
 
@@ -99,7 +132,11 @@ borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width
       ],),
     )));
   }
-
+  @override
+  void initState(){
+  super.initState();
+  charger_donnee();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,6 +169,7 @@ Container(
 message_de_suffisance();
         }else{
           ajouter_rapport();
+
         }
 
       }, icon: Icon(Icons.note_alt_outlined,color: Colors.green,size: MediaQuery.of(context).size.width *0.08,)),)

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:hackaton_conducteur/Pages/Inscription2.dart';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hackaton_conducteur/Pages/Redirection.dart';
@@ -38,11 +38,13 @@ Future <void>  connexion() async{
     );
     data = jsonDecode(message.body);
     print(data["statut"]);
+    print(data["resultat"][0][0]);
 
 }
   Future <void> sauvegarde_de_redirection() async {
     var perfs=await SharedPreferences.getInstance();
     perfs.setBool("rediction_page", true);
+    perfs.setInt("identifiant",data["resultat"][0][0]);
   }
 
   void messagecode1(){
@@ -133,6 +135,7 @@ Future <void>  connexion() async{
                 padding: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.02,right: MediaQuery.of(context).size.width *0.02),
 //Pour la saisie du numero
                 child: TextFormField(
+                  style: TextStyle(fontFamily: "Poppins"),
                   controller: numero_chef,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly
@@ -140,7 +143,7 @@ Future <void>  connexion() async{
                   cursorColor: Color(0xFF292D3E),
                   decoration: InputDecoration(
                     hintText: "Numero du chef",
-
+hintStyle: TextStyle(color: Colors.black54,fontFamily: "Poppins"),
                     prefixIcon: Icon(FontAwesomeIcons.hashtag,size: MediaQuery.of(context).size.width *0.045,color: Color(0xFF292D3E)),
 
                     enabledBorder: OutlineInputBorder(
@@ -163,11 +166,13 @@ Future <void>  connexion() async{
                 padding: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.02,right: MediaQuery.of(context).size.width *0.02),
 //Pour la saisie du numero
                 child: TextFormField(
+                  style: TextStyle(fontFamily: "Poppins"),
                   controller: mot_de_passe_chef,
 obscureText: afficher_mot_de_passe,
                   cursorColor: Color(0xFF292D3E),
                   decoration: InputDecoration(
                     hintText: "Mot de passe",
+                    hintStyle: TextStyle(color: Colors.black54,fontFamily: "Poppins"),
 suffixIcon: IconButton(onPressed: (){
   setState(() {
     afficher_mot_de_passe=!afficher_mot_de_passe;
@@ -196,7 +201,7 @@ suffixIcon: IconButton(onPressed: (){
 
 verification();
 
-              }, child: Text("SE CONNCTER",style: TextStyle(color: Colors.white),),style: ElevatedButton.styleFrom(backgroundColor: Colors.green),),),
+              }, child: Text("SE CONNECTER",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),style: ElevatedButton.styleFrom(backgroundColor: Colors.green),),),
               SizedBox(height: MediaQuery.of(context).size.height *0.02,),
 
               //animation

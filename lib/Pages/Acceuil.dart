@@ -419,7 +419,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
               child: Row(
                 children: [
                   Container(decoration: BoxDecoration(border: Border.all(color: Colors.black),borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)),child: CircleAvatar(backgroundColor: Colors.white,child: IconButton(onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>EnsemblerapportsPage()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>EnsemblerapportsPage(latitude:latitude,longitude:longitude)));
                   }, icon: Icon(Icons.note_alt_sharp,color: Colors.red)),),),
                   SizedBox(width: MediaQuery.of(context).size.width *0.04,),
                   Container(decoration: BoxDecoration(border: Border.all(color: Colors.black),borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)),child: CircleAvatar(backgroundColor: Colors.white,child: IconButton(onPressed: (){
