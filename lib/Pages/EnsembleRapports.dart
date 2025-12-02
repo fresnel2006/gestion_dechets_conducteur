@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -16,40 +18,57 @@ var longitude;
 }
 
 class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
-
+  var identifiant;
+  final description=TextEditingController();
   Future <void> envoyer_rapport() async{
     for (int i=0;i<=10;i++){
-
+      print(latitude_tableau[i]);
+      print(longitude_tableau[i]);
+      print(rapport_description[i]);
+      print(photo_tableau[i]);
+      try{
+        final url=Uri.parse("");
+        var message=await http.post(url,headers: {"Content-Type":"application/json"},
+            body: {
+              "id":"$identifiant",
+              "latitude":latitude_tableau[i],
+              "longitude":longitude_tableau[i],
+              "description":rapport_description[i],
+              "photo":photo_tableau[i]
+            }
+        );
+        var data=jsonDecode(message.body);
+        throw Exception("hoooooo my god");
+      }catch(e){
+        print("probleme mon fils");
+      }
     }
-    try{
-    final url=Uri.parse("");
-    var message=await http.post(url,headers: {"Content-Type":"application/json"},
-    body: {
 
-    }
-    );
-        }catch(e){
-
-    }
 
   }
   Future <void> charger_donnee()async{
     var perfs=await SharedPreferences.getInstance();
-    int? valeur_de_redirection=perfs.getInt("identifiant");
-    print(valeur_de_redirection);
+    identifiant=perfs.getInt("identifiant");
+    print(identifiant);
   }
 List <String> rapport_description=[];
 List <double> longitude_tableau=[];
 List <double> latitude_tableau=[];
 List <String> photo_tableau=[];
-final description=TextEditingController();
+
 var photo_rapport;
+  var photo_rapport_string;
 
 
 Future <void> prendre_photo() async{
   var photo=await ImagePicker().pickImage(source: ImageSource.camera);
-  setState(() async{
-    photo_rapport= await Image.file(File(photo!.path));
+  
+  setState(() {
+    photo_rapport= Image.file(File(photo!.path));
+  });
+  var photo_string=  await photo!.readAsBytes();
+  setState((){
+    photo_rapport_string=  base64Encode( photo_string).toString();
   });
 }
 void ajouter_description(){
@@ -60,12 +79,17 @@ void ajouter_description(){
     rapport_description.add(valeur);
     latitude_tableau.add(loca_latitude);
     longitude_tableau.add(loca_longitude);
+    photo_tableau.add(photo_rapport_string);
+    print(photo_tableau[0]);
   });
   print(rapport_description);
   print(valeur);
   print(latitude_tableau);
   print(longitude_tableau);
   description.clear();
+  setState(() {
+    photo_rapport=null;
+  });
   Navigator.pop(context);
 
 }
@@ -83,7 +107,7 @@ child: ListTile(title: Text("LIMITE ATTEINTE",style: TextStyle(color: Colors.whi
     
   )));
 }
-  void ajouter_rapport() {
+  void ajouter_rapport()  {
     showModalBottomSheet(backgroundColor: Colors.transparent,context: context, builder: (context)=>SingleChildScrollView(
         child: Container(
       height: MediaQuery.of(context).size.height *1,
@@ -97,7 +121,7 @@ child: ListTile(title: Text("LIMITE ATTEINTE",style: TextStyle(color: Colors.whi
         Container(child: Text("AJOUTER UN RAPPORT",style: TextStyle(fontFamily: "Poppins",fontSize: MediaQuery.of(context).size.width *0.06),),),
         SizedBox(height: MediaQuery.of(context).size.height *0.02,),
         Container(child: Text("Appuyer pour prendre une photo",style: TextStyle(fontFamily: "Poppins",fontSize: MediaQuery.of(context).size.width *0.04)),),
-
+SizedBox(height: MediaQuery.of(context).size.height *0.01,),
 GestureDetector(
   child: photo_rapport==null?Container(
       child: Lottie.asset("assets/animations/Add new.json",height: MediaQuery.of(context).size.height *0.20)):Container(
@@ -109,7 +133,9 @@ GestureDetector(
     prendre_photo();
   },
 
-),Container(
+),
+        SizedBox(height: MediaQuery.of(context).size.height *0.02,),
+          Container(
           height: MediaQuery.of(context).size.height *0.1,
           padding: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.04,right: MediaQuery.of(context).size.width *0.04),
           child: TextFormField(
@@ -169,7 +195,6 @@ Container(
 message_de_suffisance();
         }else{
           ajouter_rapport();
-
         }
 
       }, icon: Icon(Icons.note_alt_outlined,color: Colors.green,size: MediaQuery.of(context).size.width *0.08,)),)
@@ -178,7 +203,7 @@ message_de_suffisance();
 
               margin: EdgeInsets.only(top: MediaQuery.of(context).size.height *0.01),
               child: ElevatedButton(onPressed: (){
-
+envoyer_rapport();
               }, child: Text("ENVOYER",style: TextStyle(color: Colors.white),),style: ElevatedButton.styleFrom(backgroundColor: Colors.green),),
             ):Container(),
 SizedBox(height:MediaQuery.of(context).size.height *0.035)
@@ -212,7 +237,8 @@ SizedBox(height:MediaQuery.of(context).size.height *0.035)
                   Container(child: Text("AUCUNE INFORMATION \nDISPONIBLE VEUILLEZ \nSAISIR UN RAPPORT",textAlign: TextAlign.center,style: TextStyle(fontFamily: "Poppins2",fontSize: MediaQuery.of(context).size.width *0.05),),),
                   Container(
                     child: Lottie.asset("assets/animations/Warning animation.json",height: MediaQuery.of(context).size.height *0.2),),
-                    Container(child: ElevatedButton(onPressed: (){
+                    Container(child: ElevatedButton(onPressed: ()async{
+
                       ajouter_rapport();
                     }, child: Text("AJOUTER",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),style: ElevatedButton.styleFrom(backgroundColor: Colors.deepOrange[400]),),)
                 ],),
