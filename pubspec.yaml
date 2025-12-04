@@ -42,6 +42,7 @@ dependencies:
   image: ^4.0.17
   shared_preferences: ^2.5.3
   mapbox_maps_flutter: ^2.12.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
