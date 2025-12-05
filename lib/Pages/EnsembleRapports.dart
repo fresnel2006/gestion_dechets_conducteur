@@ -49,6 +49,25 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
         )
     )));
   }
+  void message_champ_vide(){
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(duration: Duration(seconds: 1),backgroundColor: Colors.transparent,content: GestureDetector(
+        child: Container(
+          height: MediaQuery.of(context).size.height *0.1,
+          width: MediaQuery.of(context).size.width *1,
+          decoration: BoxDecoration(color: Colors.red,
+              borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.06))
+          ),
+          child: ListTile(
+
+            title: Text("CHAMP VIDE",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+            subtitle: Container(
+              margin: EdgeInsets.only(top: MediaQuery.of(context).size.height *0.01),
+              child: Text("VOUS DEVEZ ENTRER DES DONNEES",style: TextStyle(color: Colors.white70,fontFamily: "Poppins"),),),
+            leading: Icon(Icons.dangerous,size: MediaQuery.of(context).size.width *0.15,color: Colors.white,),
+          ),
+        )
+    )));
+  }
   Future <void> verifier_mot_de_passe() async{
     showModalBottomSheet(backgroundColor:Colors.transparent,context: context, builder: (context)=>SingleChildScrollView(child:Container(height: MediaQuery.of(context).size.height *0.6,width: MediaQuery.of(context).size.width *1,decoration: BoxDecoration(color: Colors.white,border: Border(top: BorderSide(color: Colors.green,width: MediaQuery.of(context).size.width *0.05)),
       borderRadius: BorderRadius.only(topLeft: Radius.circular(MediaQuery.of(context).size.width *0.6),topRight: Radius.circular(MediaQuery.of(context).size.width *0.6)),
@@ -286,16 +305,17 @@ GestureDetector(
             maxLines: 200,
             decoration: InputDecoration(
             hintText: "DESCRIPTION",
-//iciiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+
 suffixIcon: IconButton(onPressed: ()async{
   if(photo==null|| description.text.isEmpty){
-
+    Navigator.pop(context);
+    message_champ_vide();
   }else{
-
+    ajouter_description();
+    await sauvegarder_rapports();
+    Navigator.pop(context);
   }
-ajouter_description();
-await sauvegarder_rapports();
-Navigator.pop(context);
+
 }, icon: Icon(Icons.send,color: Colors.black,)),
 hintStyle: TextStyle(fontFamily: "Poppins"),
             enabledBorder: OutlineInputBorder(
