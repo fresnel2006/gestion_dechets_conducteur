@@ -28,10 +28,85 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
   var data;
   final description=TextEditingController();
   var photo;
-  var heure=DateTime.now().hour;
+  var date=DateTime.now();
+  final mot_de_passe=TextEditingController();
+  void message_mot_de_passe_incorrect(){
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(duration: Duration(seconds: 1),backgroundColor: Colors.transparent,content: GestureDetector(
+        child: Container(
+          height: MediaQuery.of(context).size.height *0.1,
+          width: MediaQuery.of(context).size.width *1,
+          decoration: BoxDecoration(color: Colors.red,
+              borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.06))
+          ),
+          child: ListTile(
 
-  void message_de_limite(){
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(duration: Duration(seconds: 1),backgroundColor: Colors.transparent,content: Container(
+            title: Text("INCORRECT",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+            subtitle: Container(
+              margin: EdgeInsets.only(top: MediaQuery.of(context).size.height *0.01),
+              child: Text("REESSAYEZ",style: TextStyle(color: Colors.white70,fontFamily: "Poppins"),),),
+            leading: Icon(Icons.dangerous,size: MediaQuery.of(context).size.width *0.15,color: Colors.white,),
+          ),
+        )
+    )));
+  }
+  Future <void> verifier_mot_de_passe() async{
+    showModalBottomSheet(backgroundColor:Colors.transparent,context: context, builder: (context)=>SingleChildScrollView(child:Container(height: MediaQuery.of(context).size.height *0.6,width: MediaQuery.of(context).size.width *1,decoration: BoxDecoration(color: Colors.white,border: Border(top: BorderSide(color: Colors.green,width: MediaQuery.of(context).size.width *0.05)),
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(MediaQuery.of(context).size.width *0.6),topRight: Radius.circular(MediaQuery.of(context).size.width *0.6)),
+
+    ),child: Column(
+      children: [
+        Container(width: MediaQuery.of(context).size.width *1,),
+        SizedBox(height: MediaQuery.of(context).size.height *0.06,),
+        Lottie.asset("assets/animations/Warning animation.json"),
+        SizedBox(height: MediaQuery.of(context).size.height *0.04,),
+        Container(child: Text("Saisissez votre \nmot de passe actuel : ",textAlign: TextAlign.center,style: TextStyle(fontFamily: "Poppins",fontSize: MediaQuery.of(context).size.width *0.05),),),
+        SizedBox(height: MediaQuery.of(context).size.height *0.04,),
+        Container(
+          height: MediaQuery.of(context).size.height *0.07,
+          width: MediaQuery.of(context).size.width *0.7,
+          child: TextFormField(
+            controller: mot_de_passe,
+            decoration: InputDecoration(
+                hintText: "Mot de passe",
+                hintStyle: TextStyle(fontFamily: "Poppins",color: Colors.black38),
+                prefixIcon: Icon(Icons.lock),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.065))
+                ),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.065))
+                )
+            ),),),
+        SizedBox(height: MediaQuery.of(context).size.height *0.04,),
+        Container(
+
+          child: ElevatedButton(onPressed: (){
+            if(mot_de_passe.text!="fresco2.0"){
+              Navigator.pop(context);
+              message_mot_de_passe_incorrect();
+            }
+            else{
+              setState(() {
+                rapport_description=[];
+                longitude_tableau=[];
+                latitude_tableau=[];
+                photo_tableau=[];
+                photo_rapport;
+                photo_rapport_string=[];
+              });
+            Navigator.pop(context);
+            }
+          }, child: Text("VERIFIER",style: TextStyle(fontFamily:"Poppins",color: Colors.white,fontSize: MediaQuery.of(context).size.width *0.05),),style: ElevatedButton.styleFrom(backgroundColor: Colors.green),),)
+      ],
+    ),)));
+  }
+  void message_de_validation(){
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(duration: Duration(seconds: 1),backgroundColor: Colors.transparent,content: GestureDetector(
+        onTap: (){
+          verifier_mot_de_passe();
+          print("jqklsjsdlsq");
+        },
+        child: Container(
       height: MediaQuery.of(context).size.height *0.1,
       width: MediaQuery.of(context).size.width *1,
       decoration: BoxDecoration(color: Colors.green,
@@ -43,7 +118,7 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
           child: Text("MERCI !",style: TextStyle(color: Colors.white70,fontFamily: "Poppins"),),),
         leading: Icon(Icons.check_circle_outline,size: MediaQuery.of(context).size.width *0.15,color: Colors.white,),
       ),
-
+    )
     )));
   }
   Future <void> sauvegarder_rapports()async{
@@ -53,7 +128,6 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
     await perfs.setStringList("latitude_tableau", latitude_tableau);
   }
   Future <void> charger_donnee()async{
-    print(heure);
     var perfs=await SharedPreferences.getInstance();
     setState(() {
       identifiant= perfs.getInt("identifiant")??0;
@@ -79,7 +153,6 @@ Future <void> prendre_photo() async {
   });
 }
 void ajouter_description() async {
-
   setState(() {
     String loca_longitude=widget.latitude.toString();
     String loca_latitude=widget.longitude.toString();
@@ -117,10 +190,70 @@ child: ListTile(title: Text("LIMITE ATTEINTE",style: TextStyle(color: Colors.whi
     
   )));
 }
-  void ajouter_rapport()  {
+  void modifier_rapport(int index)  {
+  description.text=rapport_description[index];
     showModalBottomSheet(backgroundColor: Colors.transparent,context: context, builder: (context)=>SingleChildScrollView(
         child: Container(
-      height: MediaQuery.of(context).size.height *1,
+          height: MediaQuery.of(context).size.height *0.55,
+          width: MediaQuery.of(context).size.width *1,
+          decoration: BoxDecoration(
+              border: Border(top: BorderSide(color: Colors.green,width: 20)),
+              borderRadius: BorderRadius.only(topRight: Radius.circular(MediaQuery.of(context).size.width *1),topLeft: Radius.circular(MediaQuery.of(context).size.width *1)),color: Colors.white),
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height *0.03,),
+              Container(child: Text("MODIFIER \nVOTRE RAPPORT",textAlign: TextAlign.center,style: TextStyle(fontFamily: "Poppins",fontSize: MediaQuery.of(context).size.width *0.06),),),
+              SizedBox(height: MediaQuery.of(context).size.height *0.02,),
+              Container(child: Text("Appuyer pour prendre \nune nouvelle photo",textAlign: TextAlign.center,style: TextStyle(fontFamily: "Poppins",fontSize: MediaQuery.of(context).size.width *0.04)),),
+              SizedBox(height: MediaQuery.of(context).size.height *0.01,),
+              GestureDetector(
+                child: photo_rapport==null?Container(
+                    child: Lottie.asset("assets/animations/Add new.json",height: MediaQuery.of(context).size.height *0.20)):Container(
+                  height: MediaQuery.of(context).size.height *0.15,
+                  child: Container(
+                    decoration: BoxDecoration(border: Border.all(color: Colors.green,width: MediaQuery.of(context).size.width *0.007,),borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.02))),
+                    child:ClipRRect(child: photo_rapport,),),),
+                onTap: (){
+                  prendre_photo();
+                },
+
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height *0.02,),
+              Container(
+                height: MediaQuery.of(context).size.height *0.1,
+                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.04,right: MediaQuery.of(context).size.width *0.04),
+                child: TextFormField(
+                  controller: description,
+                  maxLines: 200,
+                  decoration: InputDecoration(
+                      hintText: "DESCRIPTION",
+                      suffixIcon: IconButton(onPressed: ()async{
+                        rapport_description[index]=description.text;
+                        await sauvegarder_rapports();
+                        Navigator.pop(context);
+
+                      }, icon: Icon(Icons.send,color: Colors.black,)),
+                      hintStyle: TextStyle(fontFamily: "Poppins"),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.03))
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.03))
+                      )
+                  ),
+                ),)
+            ],),
+        )));
+  }
+  void ajouter_rapport()  {
+    if(description.text.isNotEmpty){
+      setState(() {
+        description.clear();
+      });
+    }
+    showModalBottomSheet(backgroundColor: Colors.transparent,context: context, builder: (context)=>SingleChildScrollView(
+        child: Container(
+      height: MediaQuery.of(context).size.height *0.55,
       width: MediaQuery.of(context).size.width *1,
       decoration: BoxDecoration(
           border: Border(top: BorderSide(color: Colors.green,width: 20)),
@@ -130,7 +263,7 @@ child: ListTile(title: Text("LIMITE ATTEINTE",style: TextStyle(color: Colors.whi
         SizedBox(height: MediaQuery.of(context).size.height *0.07,),
         Container(child: Text("AJOUTER UN RAPPORT",style: TextStyle(fontFamily: "Poppins",fontSize: MediaQuery.of(context).size.width *0.06),),),
         SizedBox(height: MediaQuery.of(context).size.height *0.02,),
-        Container(child: Text("Appuyer pour prendre une photo",style: TextStyle(fontFamily: "Poppins",fontSize: MediaQuery.of(context).size.width *0.04)),),
+        Container(child: Text("Appuyer pour prendre \nune photo",textAlign: TextAlign.center,style: TextStyle(fontFamily: "Poppins",fontSize: MediaQuery.of(context).size.width *0.04)),),
 SizedBox(height: MediaQuery.of(context).size.height *0.01,),
 GestureDetector(
   child: photo_rapport==null?Container(
@@ -153,9 +286,16 @@ GestureDetector(
             maxLines: 200,
             decoration: InputDecoration(
             hintText: "DESCRIPTION",
+//iciiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
 suffixIcon: IconButton(onPressed: ()async{
+  if(photo==null|| description.text.isEmpty){
+
+  }else{
+
+  }
 ajouter_description();
 await sauvegarder_rapports();
+Navigator.pop(context);
 }, icon: Icon(Icons.send,color: Colors.black,)),
 hintStyle: TextStyle(fontFamily: "Poppins"),
             enabledBorder: OutlineInputBorder(
@@ -213,9 +353,10 @@ message_de_suffisance();
             rapport_description.length==10?Container(
 
               margin: EdgeInsets.only(top: MediaQuery.of(context).size.height *0.01),
-              child: ElevatedButton(onPressed: (){
-message_de_limite();
-              }, child: Text("LIMITE ATTEINTE ! ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),style: ElevatedButton.styleFrom(backgroundColor: Colors.deepOrangeAccent),),
+              child: ElevatedButton(onPressed: ()async{
+message_de_validation();
+await sauvegarder_rapports();
+              }, child: Text("VALIDER",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),style: ElevatedButton.styleFrom(backgroundColor: Colors.deepOrangeAccent),),
             ):Container(),
 SizedBox(height:MediaQuery.of(context).size.height *0.035)
 ,Container(
@@ -244,7 +385,9 @@ SizedBox(height:MediaQuery.of(context).size.height *0.035)
                       ],),
                   ))):ListView.builder(itemCount: rapport_description.length,itemBuilder: (context, index) =>
                   ListTile(
-                    leading: IconButton(onPressed: (){}, icon: Icon(Icons.add_circle_outline_rounded,color: Colors.green,size: MediaQuery.of(context).size.width *0.1,)),
+                    leading: IconButton(onPressed: (){
+                      modifier_rapport(index);
+                    }, icon: Icon(Icons.add_circle_outline_rounded,color: Colors.green,size: MediaQuery.of(context).size.width *0.1,)),
                     title: Text("Rapport ${index+1}",style: TextStyle(fontFamily: "Poppins"),),
                     subtitle: Text("latitude: ${latitude_tableau[index]},longitude : ${longitude_tableau[index]}",style: TextStyle(fontFamily: "Poppins",color: Colors.green),),
                     trailing: Container(

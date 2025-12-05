@@ -72,7 +72,7 @@ Text("DESCRIPTION : ",style: TextStyle(color: Colors.green,fontFamily: "Poppins"
             SizedBox(height: MediaQuery.of(context).size.height *0.02,),
             Container(
               padding: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.04 ,right:MediaQuery.of(context).size.width *0.04 ),
-              child: Text("knldqklfdhlqkhmjqsfhjlqkhfcsnobcfhdhnjbvsvjfdhkfshdkjmlhkdjmsflhmjsfdffksl,jlhjlsdjhslkjdhfdjksljsldsljslsdlklslkskdklkmsklskklsjjlsljskjkjshjskcjsdknjcndcudnbjcuhdgbucjgdujksfdujlfdshjfdksujhfkduls",style: TextStyle(fontFamily: "Poppins"),),)
+              child: Text(widget.description,style: TextStyle(fontFamily: "Poppins"),),)
 
         ],),),
     );
