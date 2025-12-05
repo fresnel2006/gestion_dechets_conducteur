@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AcceuilPage extends StatefulWidget {
   const AcceuilPage({super.key});
@@ -17,6 +18,28 @@ class AcceuilPage extends StatefulWidget {
 var donnee;
 
 class _AcceuilPageState extends State<AcceuilPage> {
+  var identifiant;
+  var data;
+  Future<void> avoir_trajet() async{
+
+    final url=Uri.parse("http://192.168.1.27:8000/prendre_trajet");
+    var message = await http.post(url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "id_trajet": identifiant.toString(),
+        })
+    );
+    data = jsonDecode(message.body);
+    print(data["resultat"][0][1]);
+
+  }
+  Future <void> charger_donnee() async {
+    var perfs=await SharedPreferences.getInstance();
+    setState(() {
+      identifiant=perfs.getInt("identifiant")??0;
+    });
+    print(identifiant);
+  }
   double longitude = 0;
   double latitude = 0;
   bool couleur_fond1=true;
@@ -40,7 +63,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
   bool _isFirstLocationUpdate = true;
 
   // NOUVELLE FONCTION : Afficher l'itinéraire
-  Future<void> afficherItineraire(double latitude_destination,double longitude_destination) async {
+  Future<void> afficherItineraire(double yopougonLat,double yopougonLon) async {
     if (latitude == 0 && longitude == 0) {
       print("Position non disponible");
       return;
@@ -140,6 +163,8 @@ class _AcceuilPageState extends State<AcceuilPage> {
         "pk.eyJ1IjoiZnJlc25lbDYwNyIsImEiOiJjbWhrbGx1MzMwOGV4MmtxazdsOWp0dzIxIn0.v02HfvuS1iZnm_-od_niSw");
     _determinePosition();
     avoirville();
+    charger_donnee();
+
   }
 
   Future<void> _determinePosition() async {
@@ -302,19 +327,22 @@ class _AcceuilPageState extends State<AcceuilPage> {
                 children: [
                   GestureDetector(
                     onTap: (){
+                      avoir_trajet();
                       setState(() {
                         couleur_fond1=!couleur_fond1;
                       });
                       if(couleur_fond2==false || couleur_fond3==false || couleur_fond4==false || couleur_fond5==false){
+
                         setState(() {
                           couleur_fond2=true;
                           couleur_fond3=true;
                           couleur_fond4=true;
                           couleur_fond5=true;
                         });
+                        afficherItineraire(data["resultat"][0][1],data["resultat"][0][2]);
                       }
                       // NOUVEAU : Afficher l'itinéraire vers Yopougon
-                      afficherItineraire(yopougonLat,yopougonLon);
+
                     },
                     child: Container(
 
@@ -355,6 +383,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                           couleur_fond5=true;
                         });
                       }
+                      afficherItineraire(data["resultat"][0][3],data["resultat"][0][4]);
                     },
                     child: Container(
                       padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
@@ -391,6 +420,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                           couleur_fond5=true;
                         });
                       }
+                      afficherItineraire(data["resultat"][0][9],data["resultat"][0][10]);
                     },
                     child: Container(
                       padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
@@ -428,6 +458,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                           couleur_fond5=true;
                         });
                       }
+                      afficherItineraire(data["resultat"][0][5],data["resultat"][0][6]);
                     },
                     child: Container(
                       padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
@@ -464,6 +495,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                           couleur_fond1=true;
                         });
                       }
+                      afficherItineraire(data["resultat"][0][7],data["resultat"][0][8]);
                     },
                     child: Container(
                       padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
