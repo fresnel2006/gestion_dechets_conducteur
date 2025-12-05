@@ -4,9 +4,13 @@ import 'dart:typed_data';
 
 
 import 'package:flutter/material.dart';
+import 'package:gal/gal.dart';
 import 'package:hackaton_conducteur/Pages/Page.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -24,6 +28,7 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
   var data;
   final description=TextEditingController();
   var photo;
+  var heure=DateTime.now().hour;
 
   void message_de_limite(){
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(duration: Duration(seconds: 1),backgroundColor: Colors.transparent,content: Container(
@@ -48,6 +53,7 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
     await perfs.setStringList("latitude_tableau", latitude_tableau);
   }
   Future <void> charger_donnee()async{
+    print(heure);
     var perfs=await SharedPreferences.getInstance();
     setState(() {
       identifiant= perfs.getInt("identifiant")??0;
@@ -66,12 +72,11 @@ var photo_rapport;
   var photo_rapport_string=[];
 
 Future <void> prendre_photo() async {
+  await Gal.requestAccess();
   photo = await ImagePicker().pickImage(source: ImageSource.camera);
-
   setState(() {
     photo_rapport = Image.file(File(photo!.path));
   });
-
 }
 void ajouter_description() async {
 
@@ -93,9 +98,10 @@ void ajouter_description() async {
   setState(() {
     photo_rapport=null;
   });
-
+  await Gal.putImage(photo.path);
   Navigator.pop(context);
   print(photo_rapport_string);
+
 }
 void message_de_suffisance(){
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(duration: Duration(seconds: 1),backgroundColor: Colors.transparent,content: Container(

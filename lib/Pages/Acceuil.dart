@@ -24,11 +24,88 @@ class _AcceuilPageState extends State<AcceuilPage> {
   bool couleur_fond3=true;
   bool couleur_fond4=true;
   bool couleur_fond5=true;
+
   // Pour le marqueur de l'utilisateur
   CircleAnnotationManager? _circleAnnotationManager;
   CircleAnnotation? _userCircleAnnotation;
-  // Nouvelle variable pour gérer le centrage initial de la carte
+
+  // NOUVEAU : Pour l'itinéraire
+  PolylineAnnotationManager? _polylineAnnotationManager;
+  PolylineAnnotation? _routePolyline;
+
+  // Coordonnées de Yopougon
+  final double yopougonLat = 5.3364;
+  final double yopougonLon = -4.0890;
+
   bool _isFirstLocationUpdate = true;
+
+  // NOUVELLE FONCTION : Afficher l'itinéraire
+  Future<void> afficherItineraire(double latitude_destination,double longitude_destination) async {
+    if (latitude == 0 && longitude == 0) {
+      print("Position non disponible");
+      return;
+    }
+
+    final String accessToken = "pk.eyJ1IjoiZnJlc25lbDYwNyIsImEiOiJjbWhrbGx1MzMwOGV4MmtxazdsOWp0dzIxIn0.v02HfvuS1iZnm_-od_niSw";
+
+    final url = Uri.parse(
+        "https://api.mapbox.com/directions/v5/mapbox/driving/$longitude,$latitude;$yopougonLon,$yopougonLat?geometries=geojson&access_token=$accessToken");
+
+    try {
+      final reponse = await http.get(url);
+
+      if (reponse.statusCode == 200) {
+        var data = jsonDecode(reponse.body);
+
+        if (data["routes"] != null && data["routes"].isNotEmpty) {
+          var coordinates = data["routes"][0]["geometry"]["coordinates"];
+
+          // Convertir les coordonnées
+          List<Position> positions = [];
+          for (var coord in coordinates) {
+            positions.add(Position(coord[0], coord[1]));
+          }
+
+          // Afficher la ligne
+          await _afficherLigneItineraire(positions);
+
+          // Centrer la carte
+          _mapboxMap.flyTo(
+            CameraOptions(
+              center: Point(coordinates: Position(
+                (longitude + yopougonLon) / 2,
+                (latitude + yopougonLat) / 2,
+              )),
+              zoom: 12,
+            ),
+            MapAnimationOptions(duration: 2000),
+          );
+
+          print("Itinéraire affiché !");
+        }
+      }
+    } catch (e) {
+      print("Erreur: $e");
+    }
+  }
+
+  Future<void> _afficherLigneItineraire(List<Position> positions) async {
+    if (_polylineAnnotationManager == null) return;
+
+    // Supprimer l'ancien itinéraire s'il existe
+    if (_routePolyline != null) {
+      await _polylineAnnotationManager!.delete(_routePolyline!);
+    }
+
+    // Créer le nouvel itinéraire
+    _routePolyline = await _polylineAnnotationManager!.create(
+      PolylineAnnotationOptions(
+        geometry: LineString(coordinates: positions),
+        lineColor: Colors.blue.value,
+        lineWidth: 5.0,
+      ),
+    );
+  }
 
   Future<void> avoirville() async {
     if (latitude == 0 && longitude == 0) return;
@@ -43,7 +120,6 @@ class _AcceuilPageState extends State<AcceuilPage> {
     if (reponse.statusCode == 200) {
       var message = jsonDecode(reponse.body);
       if (mounted) {
-        // Correction pour trouver le nom du lieu de manière fiable
         var address = message["address"];
         String? nomLieu = address["city"] ?? address["town"] ?? address["village"] ?? address["suburb"];
         setState(() {
@@ -108,7 +184,6 @@ class _AcceuilPageState extends State<AcceuilPage> {
         avoirville();
         _updateUserMarker(position);
 
-        // A la toute première mise à jour de la position, on centre la carte
         if (_isFirstLocationUpdate) {
           _isFirstLocationUpdate = false;
 
@@ -117,7 +192,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
               center: Point(coordinates: Position(position.longitude, position.latitude)),
               zoom: 14,
             ),
-            MapAnimationOptions(duration: 1500), // Animation fluide
+            MapAnimationOptions(duration: 1500),
           );
         }
       }
@@ -127,6 +202,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
   void _onMapCreated(MapboxMap controller) async {
     _mapboxMap = controller;
     _circleAnnotationManager = await _mapboxMap.annotations.createCircleAnnotationManager();
+    _polylineAnnotationManager = await _mapboxMap.annotations.createPolylineAnnotationManager(); // NOUVEAU
   }
 
   void _updateUserMarker(geolocator.Position position) async {
@@ -167,7 +243,6 @@ class _AcceuilPageState extends State<AcceuilPage> {
                     backgroundColor: Colors.white,
                     child: IconButton(
                       onPressed: () {
-                        // Correction de l'erreur ici
                         ZoomDrawer.of(context)!.toggle();
                       },
                       icon: Icon(Icons.menu, color: Colors.green),
@@ -186,12 +261,11 @@ class _AcceuilPageState extends State<AcceuilPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.location_on, color: Colors.red),
-                    SizedBox(width: 8),
+                    SizedBox(width: MediaQuery.of(context).size.width *0.01),
                     Text(donnee == null ? "CHARGEMENT...." : "$donnee",style: TextStyle(fontFamily: "Poppins"),),
                   ],
                 ),
               ),
-              //fresnel modifie ici met l'icone du compte
               Container(
                   margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.07),
                   decoration: BoxDecoration(border: Border.all(color: Colors.black), shape: BoxShape.circle),
@@ -199,7 +273,6 @@ class _AcceuilPageState extends State<AcceuilPage> {
                     backgroundColor: Colors.white,
                     child: IconButton(
                       onPressed: () {
-                        // Quand on appuie sur ce bouton, on recentre la carte
                         if (_currentPosition != null) {
                           _mapboxMap.flyTo(
                             CameraOptions(
@@ -217,202 +290,202 @@ class _AcceuilPageState extends State<AcceuilPage> {
           ),
           Container(
             width: MediaQuery.of(context).size.width *1,
-              decoration: BoxDecoration(
+            decoration: BoxDecoration(
                 border: Border.all(color: Colors.black),
-                  color: Colors.white70,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(MediaQuery.of(context).size.width * 0.15), topRight: Radius.circular(MediaQuery.of(context).size.width * 0.15))),
-              margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.7),
-              child: SingleChildScrollView(child: Column(children: [
-                Stack(
-                  alignment: AlignmentGeometry.center,
-                  children: [
-                    GestureDetector(
-                      onTap: (){
+                color: Colors.white70,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(MediaQuery.of(context).size.width * 0.15), topRight: Radius.circular(MediaQuery.of(context).size.width * 0.15))),
+            margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.7),
+            child: SingleChildScrollView(child: Column(children: [
+              // PREMIER TRAJET - MODIFIÉ POUR AJOUTER L'ITINÉRAIRE
+              Stack(
+                alignment: AlignmentGeometry.center,
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        couleur_fond1=!couleur_fond1;
+                      });
+                      if(couleur_fond2==false || couleur_fond3==false || couleur_fond4==false || couleur_fond5==false){
                         setState(() {
-                          couleur_fond1=!couleur_fond1;
+                          couleur_fond2=true;
+                          couleur_fond3=true;
+                          couleur_fond4=true;
+                          couleur_fond5=true;
                         });
-                        if(couleur_fond2==false || couleur_fond3==false || couleur_fond4==false || couleur_fond5==false){
-                          setState(() {
-                            couleur_fond2=true;
-                            couleur_fond3=true;
-                            couleur_fond4=true;
-                            couleur_fond5=true;
-                          });
-                        }
-                      },
-                      child: Container(
+                      }
+                      // NOUVEAU : Afficher l'itinéraire vers Yopougon
+                      afficherItineraire(yopougonLat,yopougonLon);
+                    },
+                    child: Container(
 
-                        padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
-                        margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02,top: MediaQuery.of(context).size.height *0.03),
+                      padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
+                      margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02,top: MediaQuery.of(context).size.height *0.03),
 
-                        height: MediaQuery.of(context).size.height *0.11,
-                        width: MediaQuery.of(context).size.width *0.7,
-                        decoration: BoxDecoration(
+                      height: MediaQuery.of(context).size.height *0.11,
+                      width: MediaQuery.of(context).size.width *0.7,
+                      decoration: BoxDecoration(
 
-                            color: couleur_fond1?Colors.green[400]:Colors.orange,
-                            border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
-                            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
+                          color: couleur_fond1?Colors.green[400]:Colors.orange,
+                          border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
+                          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
 
-                        ),
-                        child: ListTile(subtitle: Text("DISTANCE ",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
-                          leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
+                      ),
+                      child: ListTile(subtitle: Text("VERS YOPOUGON",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET 1",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+                        leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
 
-                      ),),
-                    //fait des modification ici c'etait pas toi la
-                    Positioned(top:MediaQuery.of(context).size.height *0.06,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
-                      child:CircleAvatar(backgroundColor: Colors.white,),))
-                  ],
-                ),Stack(
-                  alignment: AlignmentGeometry.center,
-                  children: [
-                    GestureDetector(
-                      onTap: (){
+                    ),),
+                  Positioned(top:MediaQuery.of(context).size.height *0.06,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
+                    child:CircleAvatar(backgroundColor: Colors.white,),))
+                ],
+              ),
+              // LES AUTRES TRAJETS RESTENT INCHANGÉS
+              Stack(
+                alignment: AlignmentGeometry.center,
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        couleur_fond2=!couleur_fond2;
+                      });
+                      if(couleur_fond1==false || couleur_fond3==false || couleur_fond4==false || couleur_fond5==false){
                         setState(() {
-                          couleur_fond2=!couleur_fond2;
+                          couleur_fond1=true;
+                          couleur_fond3=true;
+                          couleur_fond4=true;
+                          couleur_fond5=true;
                         });
-                        if(couleur_fond1==false || couleur_fond3==false || couleur_fond4==false || couleur_fond5==false){
-                          setState(() {
-                            couleur_fond1=true;
-                            couleur_fond3=true;
-                            couleur_fond4=true;
-                            couleur_fond5=true;
-                          });
-                        }
-                      },
-                      child: Container(
-                        padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
-                        margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02),
-                        height: MediaQuery.of(context).size.height *0.11,
-                        width: MediaQuery.of(context).size.width *0.7,
-                        decoration: BoxDecoration(
+                      }
+                    },
+                    child: Container(
+                      padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
+                      margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02),
+                      height: MediaQuery.of(context).size.height *0.11,
+                      width: MediaQuery.of(context).size.width *0.7,
+                      decoration: BoxDecoration(
 
-                            color: couleur_fond2?Colors.green[400]:Colors.orange,
-                            border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
-                            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
+                          color: couleur_fond2?Colors.green[400]:Colors.orange,
+                          border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
+                          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
 
-                        ),
-                        child: ListTile(subtitle: Text("DISTANCE ",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
-                          leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
+                      ),
+                      child: ListTile(subtitle: Text("DISTANCE ",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+                        leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
 
-                      ),),
-                    //fait des modification ici c'etait pas toi la
-                    Positioned(top:MediaQuery.of(context).size.height *0.03,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
-                      child:CircleAvatar(backgroundColor: Colors.white,),))
-                  ],
-                ),Stack(
-                  alignment: AlignmentGeometry.center,
-                  children: [
-                    GestureDetector(
-                      onTap: (){
+                    ),),
+                  Positioned(top:MediaQuery.of(context).size.height *0.03,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
+                    child:CircleAvatar(backgroundColor: Colors.white,),))
+                ],
+              ),Stack(
+                alignment: AlignmentGeometry.center,
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        couleur_fond3=!couleur_fond3;
+                      });
+                      if(couleur_fond2==false || couleur_fond1==false || couleur_fond4==false || couleur_fond5==false){
                         setState(() {
-                          couleur_fond3=!couleur_fond3;
+                          couleur_fond2=true;
+                          couleur_fond1=true;
+                          couleur_fond4=true;
+                          couleur_fond5=true;
                         });
-                        if(couleur_fond2==false || couleur_fond1==false || couleur_fond4==false || couleur_fond5==false){
-                          setState(() {
-                            couleur_fond2=true;
-                            couleur_fond1=true;
-                            couleur_fond4=true;
-                            couleur_fond5=true;
-                          });
-                        }
-                      },
-                      child: Container(
-                        padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
-                        margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02),
-                        height: MediaQuery.of(context).size.height *0.11,
-                        width: MediaQuery.of(context).size.width *0.7,
-                        decoration: BoxDecoration(
+                      }
+                    },
+                    child: Container(
+                      padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
+                      margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02),
+                      height: MediaQuery.of(context).size.height *0.11,
+                      width: MediaQuery.of(context).size.width *0.7,
+                      decoration: BoxDecoration(
 
-                            color: couleur_fond3?Colors.green[400]:Colors.orange,
-                            border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
-                            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
+                          color: couleur_fond3?Colors.green[400]:Colors.orange,
+                          border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
+                          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
 
-                        ),
-                        child: ListTile(subtitle: Text("DISTANCE ",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
-                          leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
+                      ),
+                      child: ListTile(subtitle: Text("DISTANCE ",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+                        leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
 
-                      ),),
-                    //fait des modification ici c'etait pas toi la
-                    Positioned(top:MediaQuery.of(context).size.height *0.03,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
-                      child:CircleAvatar(backgroundColor: Colors.white,),))
-                    ,
-                  ],
-                ),Stack(
-                  alignment: AlignmentGeometry.center,
-                  children: [
-                    GestureDetector(
-                      onTap: (){
+                    ),),
+                  Positioned(top:MediaQuery.of(context).size.height *0.03,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
+                    child:CircleAvatar(backgroundColor: Colors.white,),))
+                  ,
+                ],
+              ),Stack(
+                alignment: AlignmentGeometry.center,
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        couleur_fond4=!couleur_fond4;
+                      });
+                      if(couleur_fond2==false || couleur_fond3==false || couleur_fond1==false || couleur_fond5==false){
                         setState(() {
-                          couleur_fond4=!couleur_fond4;
+                          couleur_fond2=true;
+                          couleur_fond3=true;
+                          couleur_fond1=true;
+                          couleur_fond5=true;
                         });
-                        if(couleur_fond2==false || couleur_fond3==false || couleur_fond1==false || couleur_fond5==false){
-                          setState(() {
-                            couleur_fond2=true;
-                            couleur_fond3=true;
-                            couleur_fond1=true;
-                            couleur_fond5=true;
-                          });
-                        }
-                      },
-                      child: Container(
-                        padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
-                        margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02),
-                        height: MediaQuery.of(context).size.height *0.11,
-                        width: MediaQuery.of(context).size.width *0.7,
-                        decoration: BoxDecoration(
+                      }
+                    },
+                    child: Container(
+                      padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
+                      margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02),
+                      height: MediaQuery.of(context).size.height *0.11,
+                      width: MediaQuery.of(context).size.width *0.7,
+                      decoration: BoxDecoration(
 
-                            color: couleur_fond4?Colors.green[400]:Colors.orange,
-                            border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
-                            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
+                          color: couleur_fond4?Colors.green[400]:Colors.orange,
+                          border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
+                          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
 
-                        ),
-                        child: ListTile(subtitle: Text("DISTANCE ",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
-                          leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
+                      ),
+                      child: ListTile(subtitle: Text("DISTANCE ",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+                        leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
 
-                      ),),
-                    //fait des modification ici c'etait pas toi la
-                    Positioned(top:MediaQuery.of(context).size.height *0.03,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
-                      child:CircleAvatar(backgroundColor: Colors.white,),))
-                  ],
-                ),Stack(
-                  alignment: AlignmentGeometry.center,
-                  children: [
-                    GestureDetector(
-                      onTap: (){
+                    ),),
+                  Positioned(top:MediaQuery.of(context).size.height *0.03,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
+                    child:CircleAvatar(backgroundColor: Colors.white,),))
+                ],
+              ),Stack(
+                alignment: AlignmentGeometry.center,
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        couleur_fond5=!couleur_fond5;
+                      });
+                      if(couleur_fond2==false || couleur_fond3==false || couleur_fond4==false || couleur_fond1==false){
                         setState(() {
-                          couleur_fond5=!couleur_fond5;
+                          couleur_fond2=true;
+                          couleur_fond3=true;
+                          couleur_fond4=true;
+                          couleur_fond1=true;
                         });
-                        if(couleur_fond2==false || couleur_fond3==false || couleur_fond4==false || couleur_fond1==false){
-                          setState(() {
-                            couleur_fond2=true;
-                            couleur_fond3=true;
-                            couleur_fond4=true;
-                            couleur_fond1=true;
-                          });
-                        }
-                      },
-                      child: Container(
-                        padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
-                        margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02),
-                        height: MediaQuery.of(context).size.height *0.11,
-                        width: MediaQuery.of(context).size.width *0.7,
-                        decoration: BoxDecoration(
+                      }
+                    },
+                    child: Container(
+                      padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
+                      margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02),
+                      height: MediaQuery.of(context).size.height *0.11,
+                      width: MediaQuery.of(context).size.width *0.7,
+                      decoration: BoxDecoration(
 
-                            color: couleur_fond5?Colors.green[400]:Colors.orange,
-                            border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
-                            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
+                          color: couleur_fond5?Colors.green[400]:Colors.orange,
+                          border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
+                          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
 
-                        ),
-                        child: ListTile(subtitle: Text("DISTANCE ",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
-                          leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
+                      ),
+                      child: ListTile(subtitle: Text("DISTANCE ",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+                        leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
 
-                      ),),
-                    //fait des modification ici c'etait pas toi la
-                    Positioned(top:MediaQuery.of(context).size.height *0.03,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
-                      child:CircleAvatar(backgroundColor: Colors.white,),))
-                  ],
-                )
-              ],)),),
+                    ),),
+                  Positioned(top:MediaQuery.of(context).size.height *0.03,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
+                    child:CircleAvatar(backgroundColor: Colors.white,),))
+                ],
+              )
+            ],)),),
           Positioned(
               top: MediaQuery.of(context).size.height *0.14,
               right: MediaQuery.of(context).size.width *0.035,
@@ -426,9 +499,6 @@ class _AcceuilPageState extends State<AcceuilPage> {
 
                   }, icon: Icon(Icons.account_circle_sharp,color: Colors.green))),)
                 ],)),
-
-
-
         ],
       ),
     );
