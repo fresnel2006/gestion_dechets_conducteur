@@ -244,6 +244,7 @@ SizedBox(height:MediaQuery.of(context).size.height *0.035)
                       ],),
                   ))):ListView.builder(itemCount: rapport_description.length,itemBuilder: (context, index) =>
                   ListTile(
+                    leading: IconButton(onPressed: (){}, icon: Icon(Icons.add_circle_outline_rounded,color: Colors.green,size: MediaQuery.of(context).size.width *0.1,)),
                     title: Text("Rapport ${index+1}",style: TextStyle(fontFamily: "Poppins"),),
                     subtitle: Text("latitude: ${latitude_tableau[index]},longitude : ${longitude_tableau[index]}",style: TextStyle(fontFamily: "Poppins",color: Colors.green),),
                     trailing: Container(
