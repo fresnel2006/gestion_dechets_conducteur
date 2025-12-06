@@ -21,20 +21,7 @@ class _MenuPageState extends State<MenuPage> {
         children: [
           Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),child: CircleAvatar(backgroundColor: Colors.lightGreen[50] ,radius: 45,child: Lottie.asset("assets/animations/Truck Green Blue.json"),),
           ),SizedBox(height: MediaQuery.of(context).size.height *0.025,),
-          Container(
-              margin: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.03),height: MediaQuery.of(context).size.height *0.065,
-              decoration: BoxDecoration(border: Border.all(color: Colors.green),color: Colors.white,borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.1))),
-              width: MediaQuery.of(context).size.width *1,
-              child:Row(
 
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.account_circle_sharp,color: Colors.green,),
-                  TextButton(onPressed: (){
-
-                  }, child: Text("LES COMPTES",style: TextStyle(color: Colors.black,fontFamily: "Poppins2")))
-                ],
-              )),
 
 
 

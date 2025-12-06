@@ -28,7 +28,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
   bool afficher_mot_de_passe=true;
 var data;
 Future <void>  connexion() async{
-    final url = Uri.parse("http://192.168.1.27:8000/verifier_conducteur");
+    final url = Uri.parse("http://10.0.2.2:8000/verifier_conducteur");
     var message = await http.post(url,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({

@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 class PageRapport extends StatefulWidget {
-    PageRapport({super.key, required this.description, required this.latitude, required this.longitude, required this.index});
+    PageRapport({super.key, required this.description, required this.latitude, required this.longitude, required this.index, required this.date});
 var description;
 var latitude;
 var longitude;
 var index;
-
+var date;
   @override
   State<PageRapport> createState() => _PageRapportState();
 }
@@ -58,6 +58,13 @@ Container(
                 Text("LONGITUDE : ",style: TextStyle(color: Colors.green,fontFamily: "Poppins")),
                   Text(widget.longitude.toString(),style: TextStyle(color: Colors.black,fontFamily: "Poppins"))
               ],)),
+            Container(
+                margin: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.06),
+                child: Row(
+                  children: [
+                    Text("DATE DU RAPPORT : ",style: TextStyle(color: Colors.green,fontFamily: "Poppins")),
+                    Text(widget.date.toString(),style: TextStyle(color: Colors.black,fontFamily: "Poppins"))
+                  ],)),
           Container(
             margin: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.06),
             child: Row(

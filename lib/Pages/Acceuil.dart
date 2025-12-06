@@ -358,7 +358,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                           borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
 
                       ),
-                      child: ListTile(subtitle: Text("VERS YOPOUGON",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET 1",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+                      child: ListTile(subtitle: Text("DISTANCE",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET 1",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
                         leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
 
                     ),),
@@ -518,19 +518,42 @@ class _AcceuilPageState extends State<AcceuilPage> {
                 ],
               )
             ],)),),
-          Positioned(
-              top: MediaQuery.of(context).size.height *0.14,
-              right: MediaQuery.of(context).size.width *0.035,
-              child: Row(
+          Container(
+            margin: EdgeInsets.only(top: MediaQuery.of(context).size.height *0.15),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+                  Container(
+                    alignment: AlignmentGeometry.center,
+                    height:MediaQuery.of(context).size.height *0.05,
+                    width: MediaQuery.of(context).size.width *0.3,
+                    decoration:BoxDecoration(
+                      color: Colors.white,
+                      border:Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1))
+                    ),
+                    child: Text("EQUIPE $identifiant",style: TextStyle(fontFamily: "Poppins",color: Colors.red),) ,),
+                  Container(
+                    alignment: Alignment.center,
+                    height: MediaQuery.of(context).size.height *0.05,
+                    width: MediaQuery.of(context).size.width *0.4,
+                      decoration:BoxDecoration(
+                          color: Colors.white,
+                          border:Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1))
+                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                      Text("DATE : ",style: TextStyle(fontFamily: "Poppins")),
+                      Text("${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}",style: TextStyle(fontFamily: "Poppins",color: Colors.green),)
+                    ],),
+                  ),
                   Container(decoration: BoxDecoration(border: Border.all(color: Colors.black),borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)),child: CircleAvatar(backgroundColor: Colors.white,child: IconButton(onPressed: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context)=>EnsemblerapportsPage(latitude:latitude,longitude:longitude)));
                   }, icon: Icon(Icons.note_alt_sharp,color: Colors.red)),),),
-                  SizedBox(width: MediaQuery.of(context).size.width *0.04,),
-                  Container(decoration: BoxDecoration(border: Border.all(color: Colors.black),borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)),child: CircleAvatar(backgroundColor: Colors.white,child: IconButton(onPressed: (){
-
-                  }, icon: Icon(Icons.account_circle_sharp,color: Colors.green))),)
-                ],)),
+                  
+                ],),)
         ],
       ),
     );

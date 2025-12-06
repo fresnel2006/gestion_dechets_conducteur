@@ -28,7 +28,7 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
   var data;
   final description=TextEditingController();
   var photo;
-  var date=DateTime.now();
+
   final mot_de_passe=TextEditingController();
   void message_mot_de_passe_incorrect(){
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(duration: Duration(seconds: 1),backgroundColor: Colors.transparent,content: GestureDetector(
@@ -110,8 +110,9 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
                 longitude_tableau=[];
                 latitude_tableau=[];
                 photo_tableau=[];
+                date_tableau=[];
                 photo_rapport;
-                photo_rapport_string=[];
+
               });
             Navigator.pop(context);
             }
@@ -123,7 +124,7 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(duration: Duration(seconds: 1),backgroundColor: Colors.transparent,content: GestureDetector(
         onTap: (){
           verifier_mot_de_passe();
-          print("jqklsjsdlsq");
+
         },
         child: Container(
       height: MediaQuery.of(context).size.height *0.1,
@@ -145,6 +146,7 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
     await perfs.setStringList("rapport_description", rapport_description);
     await perfs.setStringList("longitude_tableau", longitude_tableau);
     await perfs.setStringList("latitude_tableau", latitude_tableau);
+    await perfs.setStringList("date_tableau", date_tableau);
   }
   Future <void> charger_donnee()async{
     var perfs=await SharedPreferences.getInstance();
@@ -153,6 +155,8 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
       rapport_description= perfs.getStringList("rapport_description")??[];
       longitude_tableau= perfs.getStringList("longitude_tableau")??[];
       latitude_tableau= perfs.getStringList("latitude_tableau")??[];
+      date_tableau=perfs.getStringList("date_tableau")??[];
+
     });
 
     print(identifiant);
@@ -160,12 +164,12 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
 List <String> rapport_description=[];
 List <String> longitude_tableau=[];
 List <String> latitude_tableau=[];
+List <String> date_tableau=[];
 var photo_tableau=[];
 var photo_rapport;
-  var photo_rapport_string=[];
+
 
 Future <void> prendre_photo() async {
-  await Gal.requestAccess();
   photo = await ImagePicker().pickImage(source: ImageSource.camera);
   setState(() {
     photo_rapport = Image.file(File(photo!.path));
@@ -178,10 +182,10 @@ void ajouter_description() async {
     rapport_description.add(description.text);
     latitude_tableau.add(loca_latitude);
     longitude_tableau.add(loca_longitude);
-
+    date_tableau.add(DateTime.now().toString());
 
   });
-
+  print(date_tableau);
   print(rapport_description);
 
   print(latitude_tableau);
@@ -192,7 +196,7 @@ void ajouter_description() async {
   });
   await Gal.putImage(photo.path);
   Navigator.pop(context);
-  print(photo_rapport_string);
+
 
 }
 void message_de_suffisance(){
@@ -414,7 +418,7 @@ SizedBox(height:MediaQuery.of(context).size.height *0.035)
                       decoration: BoxDecoration(border: Border.all(color: Colors.black,),borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1))),
                       child: CircleAvatar(backgroundColor: Colors.white,child: Icon(Icons.arrow_forward_sharp,color: Colors.green,),),
                     ),onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>PageRapport(description:rapport_description[index],latitude:latitude_tableau[index],longitude:longitude_tableau[index],index:index)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>PageRapport(description:rapport_description[index],latitude:latitude_tableau[index],longitude:longitude_tableau[index],index:index,date:date_tableau[index])));
                   },
                   ),
               ),),
