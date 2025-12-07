@@ -22,7 +22,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
   var data;
   Future<void> avoir_trajet() async{
 
-    final url=Uri.parse("http://192.168.1.27:8000/prendre_trajet");
+    final url=Uri.parse("http://192.168.1.10:8000/prendre_trajet");
     var message = await http.post(url,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
@@ -326,7 +326,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                 alignment: AlignmentGeometry.center,
                 children: [
                   GestureDetector(
-                    onTap: (){
+                    onTap: ()async{
                       avoir_trajet();
                       setState(() {
                         couleur_fond1=!couleur_fond1;
@@ -339,7 +339,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                           couleur_fond4=true;
                           couleur_fond5=true;
                         });
-                        afficherItineraire(data["resultat"][0][1],data["resultat"][0][2]);
+                        await afficherItineraire(data["resultat"][0][1],data["resultat"][0][2]);
                       }
                       // NOUVEAU : Afficher l'itinéraire vers Yopougon
 
@@ -358,7 +358,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                           borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
 
                       ),
-                      child: ListTile(subtitle: Text("DISTANCE",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET 1",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+                      child: ListTile(subtitle: Text("DISTANCE",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
                         leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
 
                     ),),
@@ -371,7 +371,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                 alignment: AlignmentGeometry.center,
                 children: [
                   GestureDetector(
-                    onTap: (){
+                    onTap: ()async{
                       setState(() {
                         couleur_fond2=!couleur_fond2;
                       });
@@ -383,7 +383,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                           couleur_fond5=true;
                         });
                       }
-                      afficherItineraire(data["resultat"][0][3],data["resultat"][0][4]);
+                      await afficherItineraire(data["resultat"][0][3],data["resultat"][0][4]);
                     },
                     child: Container(
                       padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
@@ -408,7 +408,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                 alignment: AlignmentGeometry.center,
                 children: [
                   GestureDetector(
-                    onTap: (){
+                    onTap: ()async{
                       setState(() {
                         couleur_fond3=!couleur_fond3;
                       });
@@ -420,7 +420,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                           couleur_fond5=true;
                         });
                       }
-                      afficherItineraire(data["resultat"][0][9],data["resultat"][0][10]);
+                      await afficherItineraire(data["resultat"][0][9],data["resultat"][0][10]);
                     },
                     child: Container(
                       padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
@@ -446,7 +446,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                 alignment: AlignmentGeometry.center,
                 children: [
                   GestureDetector(
-                    onTap: (){
+                    onTap: ()async{
                       setState(() {
                         couleur_fond4=!couleur_fond4;
                       });
@@ -458,7 +458,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                           couleur_fond5=true;
                         });
                       }
-                      afficherItineraire(data["resultat"][0][5],data["resultat"][0][6]);
+                      await afficherItineraire(data["resultat"][0][5],data["resultat"][0][6]);
                     },
                     child: Container(
                       padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
@@ -483,7 +483,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                 alignment: AlignmentGeometry.center,
                 children: [
                   GestureDetector(
-                    onTap: (){
+                    onTap: ()async{
                       setState(() {
                         couleur_fond5=!couleur_fond5;
                       });
@@ -495,7 +495,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                           couleur_fond1=true;
                         });
                       }
-                      afficherItineraire(data["resultat"][0][7],data["resultat"][0][8]);
+                      await afficherItineraire(data["resultat"][0][7],data["resultat"][0][8]);
                     },
                     child: Container(
                       padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),

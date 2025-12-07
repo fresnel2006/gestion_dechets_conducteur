@@ -76,6 +76,7 @@ flutter:
      - assets/animations/Warning animation.json
      - assets/animations/Add new.json
      - assets/animations/chargement.json
+     - assets/animations/Walking Pothos.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

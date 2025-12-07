@@ -1,16 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
-
 import 'package:flutter/material.dart';
 import 'package:gal/gal.dart';
 import 'package:hackaton_conducteur/Pages/Page.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
-
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -84,6 +80,7 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
           height: MediaQuery.of(context).size.height *0.07,
           width: MediaQuery.of(context).size.width *0.7,
           child: TextFormField(
+            style: TextStyle(fontFamily: "Poppins"),
             controller: mot_de_passe,
             decoration: InputDecoration(
                 hintText: "Mot de passe",
@@ -112,7 +109,7 @@ class _EnsemblerapportsPageState extends State<EnsemblerapportsPage> {
                 photo_tableau=[];
                 date_tableau=[];
                 photo_rapport;
-
+sauvegarder_rapports();
               });
             Navigator.pop(context);
             }
@@ -276,7 +273,7 @@ child: ListTile(title: Text("LIMITE ATTEINTE",style: TextStyle(color: Colors.whi
     }
     showModalBottomSheet(backgroundColor: Colors.transparent,context: context, builder: (context)=>SingleChildScrollView(
         child: Container(
-      height: MediaQuery.of(context).size.height *0.55,
+      height: MediaQuery.of(context).size.height *1,
       width: MediaQuery.of(context).size.width *1,
       decoration: BoxDecoration(
           border: Border(top: BorderSide(color: Colors.green,width: 20)),
@@ -346,7 +343,7 @@ borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width
 
         child: Column(
           children: [
-            
+
             SizedBox(height: MediaQuery.of(context).size.height *0.05,),
 Container(
   padding: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.020,right: MediaQuery.of(context).size.width *0.020),
@@ -404,7 +401,7 @@ SizedBox(height:MediaQuery.of(context).size.height *0.035)
                           child: Lottie.asset("assets/animations/Warning animation.json",height: MediaQuery.of(context).size.height *0.2),),
                         Container(child: ElevatedButton(onPressed: ()async{
 
-                          ajouter_rapport();
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>EnsemblerapportsPage(latitude:widget.latitude,longitude:widget.longitude)));
                         }, child: Text("AJOUTER",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),style: ElevatedButton.styleFrom(backgroundColor: Colors.deepOrange[400]),),)
                       ],),
                   ))):ListView.builder(itemCount: rapport_description.length,itemBuilder: (context, index) =>

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hackaton_conducteur/Pages/Redirection.dart';
@@ -28,7 +27,7 @@ class _InscriptionPageState extends State<InscriptionPage> {
   bool afficher_mot_de_passe=true;
 var data;
 Future <void>  connexion() async{
-    final url = Uri.parse("http://10.0.2.2:8000/verifier_conducteur");
+    final url = Uri.parse("http://192.168.1.10:8000/verifier_conducteur");
     var message = await http.post(url,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
@@ -38,7 +37,7 @@ Future <void>  connexion() async{
     );
     data = jsonDecode(message.body);
     print(data["statut"]);
-    print(data["resultat"][0][0]);
+
 
 }
   Future <void> sauvegarde_de_redirection() async {
@@ -46,7 +45,24 @@ Future <void>  connexion() async{
     perfs.setBool("rediction_page", true);
     perfs.setInt("identifiant",data["resultat"][0][0]);
   }
-
+  void message_erreur_conducteur(){
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(duration: Duration(seconds: 1),backgroundColor: Colors.transparent,content: GestureDetector(
+        child: Container(
+          height: MediaQuery.of(context).size.height *0.1,
+          width: MediaQuery.of(context).size.width *1,
+          decoration: BoxDecoration(color: Colors.red,
+              borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.06))
+          ),
+          child: ListTile(
+            title: Text("CONDUCTEUR INCONNU",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+            subtitle: Container(
+              margin: EdgeInsets.only(top: MediaQuery.of(context).size.height *0.01),
+              child: Text("REESSAYEZ",style: TextStyle(color: Colors.white70,fontFamily: "Poppins"),),),
+            leading: Icon(Icons.dangerous,size: MediaQuery.of(context).size.width *0.15,color: Colors.white,),
+          ),
+        )
+    )));
+  }
   void messagecode1(){
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(duration: Duration(milliseconds: 1200),backgroundColor: Colors.transparent,content: Container(
       height: MediaQuery.of(context).size.height *0.11,
@@ -88,7 +104,9 @@ Future <void>  connexion() async{
         await sauvegarde_de_redirection();
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>RedirectionPage()), (route)=>false);
       }else{
-        print("rien");}
+        message_erreur_conducteur();
+        print("rien");
+        }
     }
     if(mot_de_passe_chef.text.trim().isEmpty || mot_de_passe_chef.text.contains(" ")){
       setState(() {
