@@ -15,6 +15,7 @@ void main() async{
   ]);
   runApp(const MyApp());
 }
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -27,7 +28,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body:RedirectionPage(),
+        body:DrawerPage(),
       ),
     );
   }
