@@ -252,12 +252,15 @@ class _AcceuilPageState extends State<AcceuilPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black45,
       body: Stack(
         children: [
+
           MapWidget(
-            styleUri: MapboxStyles.MAPBOX_STREETS,
+            styleUri: MapboxStyles.DARK,
             onMapCreated: _onMapCreated,
           ),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -265,12 +268,12 @@ class _AcceuilPageState extends State<AcceuilPage> {
                   margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.07),
                   decoration: BoxDecoration(border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 1)),
                   child: CircleAvatar(
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.white60,
                     child: IconButton(
                       onPressed: () {
                         ZoomDrawer.of(context)!.toggle();
                       },
-                      icon: Icon(Icons.menu, color: Colors.green),
+                      icon: Icon(Icons.menu, color: Colors.black),
                     ),
                   )),
               Container(
@@ -279,7 +282,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                 width: MediaQuery.of(context).size.width * 0.6,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
-                  color: Colors.white,
+                  color: Colors.white60,
                   borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width * 1)),
                 ),
                 child: Row(
@@ -293,9 +296,9 @@ class _AcceuilPageState extends State<AcceuilPage> {
               ),
               Container(
                   margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.07),
-                  decoration: BoxDecoration(border: Border.all(color: Colors.black), shape: BoxShape.circle),
+                  decoration: BoxDecoration(border: Border.all(color: Colors.green), shape: BoxShape.circle),
                   child: CircleAvatar(
-                    backgroundColor: Colors.white,
+backgroundColor: Colors.transparent,
                     child: IconButton(
                       onPressed: () {
                         if (_currentPosition != null) {
@@ -310,214 +313,31 @@ class _AcceuilPageState extends State<AcceuilPage> {
                       },
                       icon: Icon(Icons.my_location, color: Colors.green),
                     ),
-                  )),
+                  )
+              ),
             ],
           ),
           Container(
             width: MediaQuery.of(context).size.width *1,
+            height: MediaQuery.of(context).size.height *0.7,
             decoration: BoxDecoration(
+
                 border: Border.all(color: Colors.black),
-                color: Colors.white70,
+                color: Colors.black45,
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(MediaQuery.of(context).size.width * 0.15), topRight: Radius.circular(MediaQuery.of(context).size.width * 0.15))),
-            margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.7),
-            child: SingleChildScrollView(child: Column(children: [
+            margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.65),
+            child: SingleChildScrollView(
+                child: Column(
+                  children: [
               // PREMIER TRAJET - MODIFIÉ POUR AJOUTER L'ITINÉRAIRE
-              Stack(
-                alignment: AlignmentGeometry.center,
-                children: [
-                  GestureDetector(
-                    onTap: ()async{
-                      avoir_trajet();
-                      setState(() {
-                        couleur_fond1=!couleur_fond1;
-                      });
-                      if(couleur_fond2==false || couleur_fond3==false || couleur_fond4==false || couleur_fond5==false){
-
-                        setState(() {
-                          couleur_fond2=true;
-                          couleur_fond3=true;
-                          couleur_fond4=true;
-                          couleur_fond5=true;
-                        });
-                        await afficherItineraire(data["resultat"][0][1],data["resultat"][0][2]);
-                      }
-                      // NOUVEAU : Afficher l'itinéraire vers Yopougon
-
-                    },
-                    child: Container(
-
-                      padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
-                      margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02,top: MediaQuery.of(context).size.height *0.03),
-
-                      height: MediaQuery.of(context).size.height *0.11,
-                      width: MediaQuery.of(context).size.width *0.7,
-                      decoration: BoxDecoration(
-
-                          color: couleur_fond1?Colors.green[400]:Colors.orange,
-                          border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
-                          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
-
-                      ),
-                      child: ListTile(subtitle: Text("DISTANCE",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
-                        leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
-
-                    ),),
-                  Positioned(top:MediaQuery.of(context).size.height *0.06,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
-                    child:CircleAvatar(backgroundColor: Colors.white,),))
-                ],
-              ),
-              // LES AUTRES TRAJETS RESTENT INCHANGÉS
-              Stack(
-                alignment: AlignmentGeometry.center,
-                children: [
-                  GestureDetector(
-                    onTap: ()async{
-                      setState(() {
-                        couleur_fond2=!couleur_fond2;
-                      });
-                      if(couleur_fond1==false || couleur_fond3==false || couleur_fond4==false || couleur_fond5==false){
-                        setState(() {
-                          couleur_fond1=true;
-                          couleur_fond3=true;
-                          couleur_fond4=true;
-                          couleur_fond5=true;
-                        });
-                      }
-                      await afficherItineraire(data["resultat"][0][3],data["resultat"][0][4]);
-                    },
-                    child: Container(
-                      padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
-                      margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02),
-                      height: MediaQuery.of(context).size.height *0.11,
-                      width: MediaQuery.of(context).size.width *0.7,
-                      decoration: BoxDecoration(
-
-                          color: couleur_fond2?Colors.green[400]:Colors.orange,
-                          border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
-                          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
-
-                      ),
-                      child: ListTile(subtitle: Text("DISTANCE ",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
-                        leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
-
-                    ),),
-                  Positioned(top:MediaQuery.of(context).size.height *0.03,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
-                    child:CircleAvatar(backgroundColor: Colors.white,),))
-                ],
-              ),Stack(
-                alignment: AlignmentGeometry.center,
-                children: [
-                  GestureDetector(
-                    onTap: ()async{
-                      setState(() {
-                        couleur_fond3=!couleur_fond3;
-                      });
-                      if(couleur_fond2==false || couleur_fond1==false || couleur_fond4==false || couleur_fond5==false){
-                        setState(() {
-                          couleur_fond2=true;
-                          couleur_fond1=true;
-                          couleur_fond4=true;
-                          couleur_fond5=true;
-                        });
-                      }
-                      await afficherItineraire(data["resultat"][0][9],data["resultat"][0][10]);
-                    },
-                    child: Container(
-                      padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
-                      margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02),
-                      height: MediaQuery.of(context).size.height *0.11,
-                      width: MediaQuery.of(context).size.width *0.7,
-                      decoration: BoxDecoration(
-
-                          color: couleur_fond3?Colors.green[400]:Colors.orange,
-                          border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
-                          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
-
-                      ),
-                      child: ListTile(subtitle: Text("DISTANCE ",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
-                        leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
-
-                    ),),
-                  Positioned(top:MediaQuery.of(context).size.height *0.03,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
-                    child:CircleAvatar(backgroundColor: Colors.white,),))
-                  ,
-                ],
-              ),Stack(
-                alignment: AlignmentGeometry.center,
-                children: [
-                  GestureDetector(
-                    onTap: ()async{
-                      setState(() {
-                        couleur_fond4=!couleur_fond4;
-                      });
-                      if(couleur_fond2==false || couleur_fond3==false || couleur_fond1==false || couleur_fond5==false){
-                        setState(() {
-                          couleur_fond2=true;
-                          couleur_fond3=true;
-                          couleur_fond1=true;
-                          couleur_fond5=true;
-                        });
-                      }
-                      await afficherItineraire(data["resultat"][0][5],data["resultat"][0][6]);
-                    },
-                    child: Container(
-                      padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
-                      margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02),
-                      height: MediaQuery.of(context).size.height *0.11,
-                      width: MediaQuery.of(context).size.width *0.7,
-                      decoration: BoxDecoration(
-
-                          color: couleur_fond4?Colors.green[400]:Colors.orange,
-                          border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
-                          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
-
-                      ),
-                      child: ListTile(subtitle: Text("DISTANCE ",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
-                        leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
-
-                    ),),
-                  Positioned(top:MediaQuery.of(context).size.height *0.03,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
-                    child:CircleAvatar(backgroundColor: Colors.white,),))
-                ],
-              ),Stack(
-                alignment: AlignmentGeometry.center,
-                children: [
-                  GestureDetector(
-                    onTap: ()async{
-                      setState(() {
-                        couleur_fond5=!couleur_fond5;
-                      });
-                      if(couleur_fond2==false || couleur_fond3==false || couleur_fond4==false || couleur_fond1==false){
-                        setState(() {
-                          couleur_fond2=true;
-                          couleur_fond3=true;
-                          couleur_fond4=true;
-                          couleur_fond1=true;
-                        });
-                      }
-                      await afficherItineraire(data["resultat"][0][7],data["resultat"][0][8]);
-                    },
-                    child: Container(
-                      padding:EdgeInsets.only(top: MediaQuery.of(context).size.height *0.015),
-                      margin:EdgeInsets.only(bottom:MediaQuery.of(context).size.height *0.02),
-                      height: MediaQuery.of(context).size.height *0.11,
-                      width: MediaQuery.of(context).size.width *0.7,
-                      decoration: BoxDecoration(
-
-                          color: couleur_fond5?Colors.green[400]:Colors.orange,
-                          border: Border(bottom: BorderSide(color: Colors.black,width: MediaQuery.of(context).size.width *0.007)),
-                          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)
-
-                      ),
-                      child: ListTile(subtitle: Text("DISTANCE ",style: TextStyle(fontFamily: "Poppins",color: Colors.white54),),title: Text("TRAJET ",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
-                        leading: CircleAvatar(radius: MediaQuery.of(context).size.width *0.1,child: Lottie.asset("assets/animations/Truck Green Blue.json"),backgroundColor: Colors.white,),),
-
-                    ),),
-                  Positioned(top:MediaQuery.of(context).size.height *0.03,right:MediaQuery.of(context).size.width *0.07,child: Container(decoration:BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1)),border: Border.all(color: Colors.green)),
-                    child:CircleAvatar(backgroundColor: Colors.white,),))
-                ],
-              )
-            ],)),),
+                Row(
+                  children: [
+Container(),
+                    Column( children:[])
+                  ],
+                )
+            ],
+            )),),
           Container(
             margin: EdgeInsets.only(top: MediaQuery.of(context).size.height *0.15),
             child: Row(
@@ -528,7 +348,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                     height:MediaQuery.of(context).size.height *0.05,
                     width: MediaQuery.of(context).size.width *0.3,
                     decoration:BoxDecoration(
-                      color: Colors.white,
+                      color: Colors.white60,
                       border:Border.all(color: Colors.black),
                       borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1))
                     ),
@@ -538,7 +358,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                     height: MediaQuery.of(context).size.height *0.05,
                     width: MediaQuery.of(context).size.width *0.4,
                       decoration:BoxDecoration(
-                          color: Colors.white,
+                          color: Colors.white60,
                           border:Border.all(color: Colors.black),
                           borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1))
                       ),
@@ -546,14 +366,15 @@ class _AcceuilPageState extends State<AcceuilPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                       Text("DATE : ",style: TextStyle(fontFamily: "Poppins")),
-                      Text("${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}",style: TextStyle(fontFamily: "Poppins",color: Colors.green),)
+                      Text("${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}",style: TextStyle(fontFamily: "Poppins",color: Colors.red),)
                     ],),
                   ),
-                  Container(decoration: BoxDecoration(border: Border.all(color: Colors.black),borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)),child: CircleAvatar(backgroundColor: Colors.white,child: IconButton(onPressed: (){
+                  Container(decoration: BoxDecoration(border: Border.all(color: Colors.black),borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width *1)),child: CircleAvatar(backgroundColor: Colors.white60,child: IconButton(onPressed: (){
                     Navigator.push(context, MaterialPageRoute(builder: (context)=>EnsemblerapportsPage(latitude:latitude,longitude:longitude)));
                   }, icon: Icon(Icons.note_alt_sharp,color: Colors.red)),),),
-                  
-                ],),)
+                ],
+            ),
+          )
         ],
       ),
     );
