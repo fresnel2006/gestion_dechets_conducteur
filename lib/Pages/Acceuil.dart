@@ -69,7 +69,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
       return;
     }
 
-    final String accessToken = "pk.eyJ1IjoiZnJlc25lbDYwNyIsImEiOiJjbWhrbGx1MzMwOGV4MmtxazdsOWp0dzIxIn0.v02HfvuS1iZnm_-od_niSw";
+    final String accessToken = "";
 
     final url = Uri.parse(
         "https://api.mapbox.com/directions/v5/mapbox/driving/$longitude,$latitude;$yopougonLon,$yopougonLat?geometries=geojson&access_token=$accessToken");
