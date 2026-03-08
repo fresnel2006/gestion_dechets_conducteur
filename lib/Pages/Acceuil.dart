@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:hackaton_conducteur/Pages/EnsembleRapports.dart';
+import 'package:hackaton_conducteur/Pages/Menu.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
@@ -20,6 +22,7 @@ var donnee;
 class _AcceuilPageState extends State<AcceuilPage> {
   var identifiant;
   var data;
+  bool drawer=false;
   Future<void> avoir_trajet() async{
 
     final url=Uri.parse("http://192.168.1.10:8000/prendre_trajet");
@@ -255,12 +258,10 @@ class _AcceuilPageState extends State<AcceuilPage> {
       backgroundColor: Colors.black45,
       body: Stack(
         children: [
-
           MapWidget(
             styleUri: MapboxStyles.DARK,
             onMapCreated: _onMapCreated,
           ),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -271,7 +272,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                     backgroundColor: Colors.white60,
                     child: IconButton(
                       onPressed: () {
-                        ZoomDrawer.of(context)!.toggle();
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>MenuPage()));
                       },
                       icon: Icon(Icons.menu, color: Colors.black),
                     ),
@@ -316,28 +317,188 @@ backgroundColor: Colors.transparent,
                   )
               ),
             ],
-          ),
+          ).animate().fadeIn(delay: Duration(milliseconds: 1400)),
           Container(
             width: MediaQuery.of(context).size.width *1,
             height: MediaQuery.of(context).size.height *0.7,
             decoration: BoxDecoration(
 
                 border: Border.all(color: Colors.black),
-                color: Colors.black45,
+                color: Colors.black54,
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(MediaQuery.of(context).size.width * 0.15), topRight: Radius.circular(MediaQuery.of(context).size.width * 0.15))),
-            margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.65),
+            margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.6),
             child: SingleChildScrollView(
                 child: Column(
                   children: [
               // PREMIER TRAJET - MODIFIÉ POUR AJOUTER L'ITINÉRAIRE
-                Row(
+                SizedBox(height: MediaQuery.of(context).size.height *0.02,),
+                    Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing:  MediaQuery.of(context).size.width *0.07,
                   children: [
-Container(),
-                    Column( children:[])
+      Container(
+
+        height: MediaQuery.of(context).size.width  *0.17,
+        width: MediaQuery.of(context).size.width *0.17,
+        decoration: BoxDecoration(
+          color: Colors.white12,
+          borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.04))
+        ),
+        child: Icon(Icons.waving_hand,color: Colors.white,),
+
+      ),
+                          Column(
+                        children:[
+                          Container(
+                            width: MediaQuery.of(context).size.width *0.5,
+                            child: Text("Commune",style: TextStyle(fontFamily: "Poppins",color: Colors.white,fontSize: MediaQuery.of(context).size.width *0.05),),
+                          )
+                          ,Container(
+                            width: MediaQuery.of(context).size.width *0.5,
+                            alignment: AlignmentDirectional.topStart,
+                            child: Text("Yopougon",style: TextStyle(color: Colors.white30,fontFamily: "Poppins"),),),
+        SizedBox(height: MediaQuery.of(context).size.height *0.016,)
+        ,Container(
+                            width: MediaQuery.of(context).size.width *0.5,
+                            height: MediaQuery.of(context).size.height *0.002,
+                            color: Colors.white54,
+                          ),
+                        ]
+                    )
                   ],
-                )
+                ),
+                    SizedBox(height: MediaQuery.of(context).size.width *0.04,),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+
+                      child: Row(
+                        spacing: MediaQuery.of(context).size.width *0.02,
+                        children: [
+                          SizedBox(width: MediaQuery.of(context).size.width *0.02,),
+                          Stack(
+                            children: [
+                              Column(
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width *0.27,
+                                    height:MediaQuery.of(context).size.width *0.27 ,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white30,
+                                      borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.06))
+                                    ),
+
+                                    child: Icon(Icons.directions_car,size: MediaQuery.of(context).size.width *0.15,color: Colors.white,),
+                                  ),
+                                  SizedBox(height: MediaQuery.of(context).size.height *0.006,),
+                                  Container(
+                                    child: Text("Course 1",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+                                  )
+                                ],
+                              )
+
+                          ],
+                          ),
+                          Stack(
+                            children: [
+                              Column(
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width *0.27,
+                                    height:MediaQuery.of(context).size.width *0.27 ,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white30,
+                                        borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.06))
+                                    ),
+
+                                    child: Icon(Icons.directions_car,size: MediaQuery.of(context).size.width *0.15,color: Colors.white,),
+                                  ),
+                                  SizedBox(height: MediaQuery.of(context).size.height *0.006,),
+                                  Container(
+                                    child: Text("Course 2",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+                                  )
+                                ],
+                              )
+
+                            ],),
+                          Stack(
+                            children: [
+                              Column(
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width *0.27,
+                                    height:MediaQuery.of(context).size.width *0.27 ,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white30,
+                                        borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.06))
+                                    ),
+
+                                    child: Icon(Icons.directions_car,size: MediaQuery.of(context).size.width *0.15,color: Colors.white,),
+                                  ),
+                                  SizedBox(height: MediaQuery.of(context).size.height *0.006,),
+                                  Container(
+                                    child: Text("Course 3",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+                                  )
+                                ],
+                              )
+
+                            ],),
+                          Stack(
+                            children: [
+                              Column(
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width *0.27,
+                                    height:MediaQuery.of(context).size.width *0.27 ,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white30,
+                                        borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *0.06))
+                                    ),
+
+                                    child: Icon(Icons.directions_car,size: MediaQuery.of(context).size.width *0.15,color: Colors.white,),
+                                  ),
+                                  SizedBox(height: MediaQuery.of(context).size.height *0.006,),
+                                  Container(
+                                    child: Text("Course 4",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),
+                                  )
+                                ],
+                              )
+
+                            ],),
+
+                        ],
+                      ),
+                    ),
+              SizedBox(height: MediaQuery.of(context).size.height *0.02,),
+              Container(
+              width: MediaQuery.of(context).size.width *0.5,
+      height: MediaQuery.of(context).size.height *0.002,
+      color: Colors.white54,
+    ),
+                    SizedBox(height: MediaQuery.of(context).size.height *0.015,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          child: Icon(Icons.keyboard_double_arrow_right_sharp,color: Colors.white,size: MediaQuery.of(context).size.width *0.1,),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          height: MediaQuery.of(context).size.height *0.06,
+                          width: MediaQuery.of(context).size.width *0.5,
+                          decoration: BoxDecoration(
+                            color: Colors.deepOrange,
+                            borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width *1))
+                          ),
+                          child: Text("C'EST PARTI !",style: TextStyle(color: Colors.white,fontFamily: "Poppins",fontSize: MediaQuery.of(context).size.width *0.045),),
+                        ),
+                        Container(
+                          child: Icon(Icons.keyboard_double_arrow_right_sharp,color: Colors.transparent,),
+                        ),
+                      ],
+                    )
+
             ],
-            )),),
+            )),).animate().fadeIn(delay: Duration(milliseconds: 1400)),
           Container(
             margin: EdgeInsets.only(top: MediaQuery.of(context).size.height *0.15),
             child: Row(
@@ -374,7 +535,8 @@ Container(),
                   }, icon: Icon(Icons.note_alt_sharp,color: Colors.red)),),),
                 ],
             ),
-          )
+          ).animate().fadeIn(delay: Duration(milliseconds: 1400)),
+
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hackaton_conducteur/Pages/Redirection.dart';
 import 'package:lottie/lottie.dart';
@@ -133,7 +134,7 @@ Future <void>  connexion() async{
 
     return Scaffold(
       //Couleur de fond
-      backgroundColor: Colors.white,
+      backgroundColor: Color(0xFF43873C),
       body: SingleChildScrollView(
         //Pour aligner verticalement les elements
         child: Stack(
@@ -145,85 +146,85 @@ Future <void>  connexion() async{
               //Image de fond
               Container(
                 child: Image.asset("assets/images/image_equipe.png",height: MediaQuery.of(context).size.height *0.4,width: MediaQuery.of(context).size.width *1,),
-              ),
+              ).animate().blur(duration: Duration(milliseconds: 900),begin: Offset(5, 5),end: Offset(0, 0)).fadeIn(duration: Duration(milliseconds: 800)),
 
               Container(
                 width: MediaQuery.of(context).size.width *0.7,
                 height: MediaQuery.of(context).size.height *0.065,
                 padding: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.02,right: MediaQuery.of(context).size.width *0.02),
-//Pour la saisie du numero
+                //Pour la saisie du numero
                 child: TextFormField(
-                  style: TextStyle(fontFamily: "Poppins"),
+                  style: TextStyle(fontFamily: "Poppins",color: Colors.white),
                   controller: numero_chef,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly
                   ],
-                  cursorColor: Color(0xFF292D3E),
+                  cursorColor: Colors.white,
                   decoration: InputDecoration(
                     hintText: "Numero du chef",
-hintStyle: TextStyle(color: Colors.black54,fontFamily: "Poppins"),
-                    prefixIcon: Icon(FontAwesomeIcons.hashtag,size: MediaQuery.of(context).size.width *0.045,color: Color(0xFF292D3E)),
-
+                    hintStyle: TextStyle(color: Colors.white54,fontFamily: "Poppins"),
+                    prefixIcon: Icon(FontAwesomeIcons.hashtag,size: MediaQuery.of(context).size.width *0.045,color: Colors.white),
                     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(
-                            Radius.circular(MediaQuery.of(context).size.width *0.03)
+                            Radius.circular(MediaQuery.of(context).size.width *1)
                         ),borderSide: BorderSide(width: MediaQuery.of(context).size.width *0.007,color: couleur_bordure1?Colors.green:Colors.red)
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(
-                          Radius.circular(MediaQuery.of(context).size.width *0.03)
+                          Radius.circular(MediaQuery.of(context).size.width *1)
                       ),
                         borderSide: BorderSide(color: couleur_bordure1?Colors.green:Colors.red,width: MediaQuery.of(context).size.width *0.007,)
                     ),
                   ),
                 ),
-              ),SizedBox(height: MediaQuery.of(context).size.height *0.02,),
+              ).animate().fadeIn(delay:Duration(milliseconds: 800))
+              ,SizedBox(height: MediaQuery.of(context).size.height *0.02,),
               Container(
                 width: MediaQuery.of(context).size.width *0.7,
                 height: MediaQuery.of(context).size.height *0.065,
                 padding: EdgeInsets.only(left: MediaQuery.of(context).size.width *0.02,right: MediaQuery.of(context).size.width *0.02),
-//Pour la saisie du numero
+                  //Pour la saisie du numero
                 child: TextFormField(
-                  style: TextStyle(fontFamily: "Poppins"),
+                  style: TextStyle(fontFamily: "Poppins",color: Colors.white),
                   controller: mot_de_passe_chef,
-obscureText: afficher_mot_de_passe,
-                  cursorColor: Color(0xFF292D3E),
+                      obscureText: afficher_mot_de_passe,
+                      cursorColor: Colors.white,
                   decoration: InputDecoration(
                     hintText: "Mot de passe",
-                    hintStyle: TextStyle(color: Colors.black54,fontFamily: "Poppins"),
-suffixIcon: IconButton(onPressed: (){
-  setState(() {
-    afficher_mot_de_passe=!afficher_mot_de_passe;
-  });
-}, icon: afficher_mot_de_passe?Icon(CupertinoIcons.eye):Icon(CupertinoIcons.eye_slash),color:Color(0xFF292D3E)),
-                    prefixIcon: Icon(FontAwesomeIcons.lock,size: MediaQuery.of(context).size.width *0.045,color: Color(0xFF292D3E)),
+                    hintStyle: TextStyle(color: Colors.white54,fontFamily: "Poppins"),
+                    suffixIcon: IconButton(onPressed: (){
+                      setState(() {
+                        afficher_mot_de_passe=!afficher_mot_de_passe;
+                      });
+                    }, icon: afficher_mot_de_passe?Icon(CupertinoIcons.eye_fill,color: Colors.white,):Icon(CupertinoIcons.eye_slash,color: Colors.white,),color:Color(0xFF292D3E)),
+                                        prefixIcon: Icon(FontAwesomeIcons.lock,size: MediaQuery.of(context).size.width *0.045,color: Colors.white),
 
                     enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(
-                            Radius.circular(MediaQuery.of(context).size.width *0.03)
+                            Radius.circular(MediaQuery.of(context).size.width *1)
                         ),borderSide: BorderSide(width: MediaQuery.of(context).size.width *0.007,color: couleur_bordure2?Colors.green:Colors.red)
                     ),
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(
-                            Radius.circular(MediaQuery.of(context).size.width *0.03)
+                            Radius.circular(MediaQuery.of(context).size.width *1)
                         ),
                         borderSide: BorderSide(color: couleur_bordure2?Colors.green:Colors.red,width: MediaQuery.of(context).size.width *0.007,)
                     ),
                   ),
                 ),
-              ),SizedBox(height: MediaQuery.of(context).size.height *0.04,),
+              ).animate().fadeIn(delay:Duration(milliseconds: 900))
+              ,SizedBox(height: MediaQuery.of(context).size.height *0.04,),
 
-    //Bouton d'inscription
+              //Bouton d'inscription
               Container(child: ElevatedButton(onPressed: () {
-
-
-verification();
-
-              }, child: Text("SE CONNECTER",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),style: ElevatedButton.styleFrom(backgroundColor: Colors.green),),),
+                verification();
+              }, child: Text("SE CONNECTER",style: TextStyle(color: Colors.white,fontFamily: "Poppins"),),style: ElevatedButton.styleFrom(backgroundColor: Colors.green),),
+              ).animate().fadeIn(delay: Duration(milliseconds: 1000)),
               SizedBox(height: MediaQuery.of(context).size.height *0.02,),
-
               //animation
-              Container(child: Lottie.asset("assets/animations/Truck Green Blue.json",height: MediaQuery.of(context).size.height *0.2,),),
+              Container(
+                child: Lottie.asset("assets/animations/Truck Green Blue.json",height: MediaQuery.of(context).size.height *0.2,),
+              ).animate().fadeIn(delay: Duration(milliseconds: 1100)),
 
 
             ],),
