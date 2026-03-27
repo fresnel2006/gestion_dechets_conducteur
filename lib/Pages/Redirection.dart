@@ -24,7 +24,7 @@ class _RedirectionPageState extends State<RedirectionPage> {
     if(valeur_de_redirection==false){
       Navigator.push(context, MaterialPageRoute(builder: (context)=>InscriptionPage()));
     }else{
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>DrawerPage()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>AcceuilPage()));
 
     }
     print(valeur_de_redirection);
