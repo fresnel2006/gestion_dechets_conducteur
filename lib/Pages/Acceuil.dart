@@ -356,7 +356,7 @@ class _AcceuilPageState extends State<AcceuilPage> {
                               ,Container(
                                 width: MediaQuery.of(context).size.width *0.5,
                                 alignment: AlignmentDirectional.topStart,
-                                child: donnee==null?Text("Chargement...",style: TextStyle(color: Colors.white30,fontFamily: "Poppins"),):Text(donnee,style: TextStyle(color: Colors.white30,fontFamily: "Poppins"),),),
+                                child: donnee==null?Text("Chargement... ",style: TextStyle(color: Colors.white30,fontFamily: "Poppins"),):Text(donnee,style: TextStyle(color: Colors.white30,fontFamily: "Poppins"),),),
 
                               SizedBox(height: MediaQuery.of(context).size.height *0.016,)
                               ,Container(

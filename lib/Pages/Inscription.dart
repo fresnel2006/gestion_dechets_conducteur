@@ -100,14 +100,9 @@ Future <void>  connexion() async{
       });
     }
     if(numero_chef.text.length==10 && mot_de_passe_chef.text.isNotEmpty && !mot_de_passe_chef.text.contains(" ")) {
-      await connexion();
-      if(data["statut"]=="succes"){
-        await sauvegarde_de_redirection();
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>RedirectionPage()), (route)=>false);
-      }else{
-        message_erreur_conducteur();
-        print("rien");
-        }
+      sauvegarde_de_redirection();
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>RedirectionPage()), (route)=>false);
+
     }
     if(mot_de_passe_chef.text.trim().isEmpty || mot_de_passe_chef.text.contains(" ")){
       setState(() {
